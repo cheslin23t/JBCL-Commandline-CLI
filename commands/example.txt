@@ -1,0 +1,9 @@
+from util.registry import command
+
+@command("values", "Description", "Usage", ["v", "val"])
+def values(name, amount):
+    print(f"name={name}, amount={amount}")
+
+@command("inventory", "Description", "Usage", ["inv", "i"])
+def kick(user):
+    print(f"Example {user}")
