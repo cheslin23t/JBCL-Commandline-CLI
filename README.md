@@ -166,12 +166,25 @@ This project is licensed under the [AGPL-3.0 License](LICENSE).
 
 ---
 
+## 🚨 Notice
+
+PLEASE don't ruin it for all of us. Be respectful to the JBCL API and follow all of it's terms. They can be found in one of the links below. The goal of this interface is to minimize the requests being made to JBCL that would otherwise cost them bandwidth and resources. Additionally, this is meant to be an advanced and quick set of tools for Jailbreak Traders.
+
+---
+
 ## 💡 Useful Links
 
 - [Roblox Jailbreak](https://www.roblox.com/games/606849621/Jailbreak)  
 - [GitHub Issues](https://github.com/cheslin23t/JBCL-Commandline-CLI/issues)  
 - [GitHub Discussions](https://github.com/cheslin23t/JBCL-Commandline-CLI/discussions)  
 - [JBCL API (Undocumented)](https://api.jailbreakchangelogs.xyz)
+
+---
+
+## 📇 Contact
+
+- [Discord](discord://-/users/1334576002520846376) (cologneishim)
+
 ---
 
 ## 🙌 Thanks
