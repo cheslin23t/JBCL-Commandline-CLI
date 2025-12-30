@@ -162,18 +162,19 @@ Feel free to **fork** the project and submit a pull request.
 
 ## 📜 License
 
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [AGPL-3.0 License](LICENSE).
 
 ---
 
 ## 💡 Useful Links
 
 - [Roblox Jailbreak](https://www.roblox.com/games/606849621/Jailbreak)  
-- [GitHub Issues](https://github.com/cheslin23t/JB-X/issues)  
-- [GitHub Discussions](https://github.com/cheslin23t/JB-X/discussions)  
-
+- [GitHub Issues](https://github.com/cheslin23t/JBCL-Commandline-CLI/issues)  
+- [GitHub Discussions](https://github.com/cheslin23t/JBCL-Commandline-CLI/discussions)  
+- [JBCL API (Undocumented)](https://api.jailbreakchangelogs.xyz)
 ---
 
 ## 🙌 Thanks
+(Readme refined with AI to make it more visually pleasing)
 
-Thanks for using JB-X! 🎉 
+Thanks for using JBCL-Commandline-CLI! 🎉 
