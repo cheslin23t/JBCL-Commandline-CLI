@@ -1,10 +1,9 @@
 # JB-X: Jailbreak Changelogs CLI & API Interface
 
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/cheslin23t/JB-X/python-app.yml?branch=main)](https://github.com/cheslin23t/JB-X/actions)
-[![Python Version](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
-[![License](https://img.shields.io/github/license/cheslin23t/JB-X)](LICENSE)
-[![Stars](https://img.shields.io/github/stars/cheslin23t/JB-X?style=social)](https://github.com/cheslin23t/JB-X/stargazers)
-[![Forks](https://img.shields.io/github/forks/cheslin23t/JB-X?style=social)](https://github.com/cheslin23t/JB-X/network/members)
+[![Python Version](https://img.shields.io/badge/python-3.13.3%2B-blue.svg)](https://www.python.org/downloads/)
+[![License](https://img.shields.io/github/license/cheslin23t/JBCL-Commandline-CLI)](LICENSE)
+[![Stars](https://img.shields.io/github/stars/cheslin23t/JBCL-Commandline-CLI?style=social)](https://github.com/cheslin23t/JBCL-Commandline-CLI/stargazers)
+[![Forks](https://img.shields.io/github/forks/cheslin23t/JBCL-Commandline-CLI?style=social)](https://github.com/cheslin23t/JBCL-Commandline-CLI/network/members)
 
 A Python-based CLI and API interface for querying **Roblox Jailbreak item data**, values, trends, and changelog information. Designed to be **modular**, **extensible**, and **developer-friendly**.
 
@@ -25,7 +24,7 @@ A Python-based CLI and API interface for querying **Roblox Jailbreak item data**
 ## 📁 Project Structure
 
 ```
-JB-X/
+JBCL-Commandline-CLI/
 │
 ├── main.py                 # CLI entry point
 ├── util/
@@ -42,7 +41,7 @@ JB-X/
 
 ### Requirements
 
-- Python 3.9+  
+- Python 3.13.3+ (Earlier versions untested)
 - Virtual environment recommended
 
 ### Install Dependencies
