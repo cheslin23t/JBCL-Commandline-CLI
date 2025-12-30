@@ -70,16 +70,23 @@ def main():
         func = cmd["func"]
         sig = inspect.signature(func)
         params = list(sig.parameters.values())
+        param_names = [p.name for p in params]
         required_params = [
-        p for p in params
-        if p.default is inspect._empty]
+            p for p in params
+            if p.default is inspect._empty and p.name != "flags"
+        ]
+
         provided = len(args)
         missing = required_params[provided:]
         for param in missing:
             value = input(f"{param.name}: ").strip()
             args.append(value)
+
         try:
-            func(*args)
+            if "flags" in param_names:
+                func(*args, flags=flags)
+            else:
+                func(*args)
         except TypeError as e:
             print(f"Argument error: {e}")
             if cmd.get("usage"):

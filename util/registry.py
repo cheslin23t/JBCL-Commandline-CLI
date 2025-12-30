@@ -17,8 +17,8 @@ def command(name, description, usage, aliases=None):
 
     def decorator(func):
         @functools.wraps(func)
-        def wrapper(*args):
-            return func(*args)
+        def wrapper(*args, **kwargs):
+            return func(*args, **kwargs)
 
         metadata = {
             "func": wrapper,

@@ -1,8 +1,9 @@
 from util.registry import command
 
 @command("quit", "Quit the application", "quit", ["q", "exit"])
-def quit_command(flags=""):
-    if flags == "--force":
+def quit_command(flags=None):
+    flags = flags or []
+    if "--force" in flags:
         print("Quitting the application...")
         exit()
         return
