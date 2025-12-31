@@ -7,7 +7,7 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('commands', 'commands')],  # <--- THIS IS THE CRITICAL FIX
     hiddenimports=hidden_imports,
     hookspath=[],
     hooksconfig={},
@@ -24,7 +24,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='jb-x',  # I renamed this to jb-x for clarity
+    name='jb-x',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,

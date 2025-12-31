@@ -1,8 +1,11 @@
+import sys
+import os
 import importlib
 import pkgutil
 import inspect
 from util.registry import COMMANDS
 from util.version import __version__
+
 # from PyInstaller.utils.hooks import collect_submodules
 
 # hiddenimports = collect_submodules('commands')
@@ -11,7 +14,16 @@ def load_command_modules():
     import commands
     print("Loading command modules...")
     print("")
-    for _, module_name, _ in pkgutil.iter_modules(commands.__path__):
+
+    # Default search path (works locally)
+    search_path = commands.__path__
+
+    # FIX: If running as compiled exe, force search in the extracted folder
+    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+        search_path = [os.path.join(sys._MEIPASS, 'commands')]
+    any_module_loaded = False
+    for _, module_name, _ in pkgutil.iter_modules(search_path):
+        any_module_loaded = True
         if module_name.startswith("_"):
             continue
         importlib.import_module(f"commands.{module_name}")
@@ -19,15 +31,16 @@ def load_command_modules():
         try:
             importlib.import_module(f"commands.{module_name}")
             print(f"Successfully imported module {module_name}")
-            print("")
         except Exception as e:
             print(f"Failed to import module {module_name}: {e}")
-
-
+    print("")
+    if not any_module_loaded:
+        print("Warning: No command modules were loaded. Try checking the PyInstaller spec file for correct data inclusion, or run the script directly without compiling.")
+        exit(1)
 
 def main():
     greet = f"""
-    JB-X Command Line Interface ({__version__})
+    JBCL Command Line Interface v{__version__}
     Type 'help' for a list of commands.
     Type '<command> --help' for usage.
     Type 'exit' to quit.
@@ -37,7 +50,12 @@ def main():
 
     load_command_modules()
     while True:
-        raw = input("> ").strip()
+        try:
+            raw = input("> ").strip()
+        except (EOFError, KeyboardInterrupt):
+            print("\nExiting...")
+            break
+            
         if not raw:
             continue
 
@@ -59,6 +77,8 @@ def main():
 
         if args is None:
             continue
+        
+        
 
         cmd = COMMANDS.get(cmd_name)
         if not cmd:
