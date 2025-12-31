@@ -2,7 +2,7 @@ import importlib
 import pkgutil
 import inspect
 from util.registry import COMMANDS
-
+from util.version import __version__
 from PyInstaller.utils.hooks import collect_submodules
 
 hiddenimports = collect_submodules('commands')
@@ -26,14 +26,15 @@ def load_command_modules():
 
 
 def main():
-    greet = """
-    JB-X Command Line Interface
+    greet = f"""
+    JB-X Command Line Interface ({__version__})
     Type 'help' for a list of commands.
     Type '<command> --help' for usage.
     Type 'exit' to quit.
 
     """
     print(greet)
+
     load_command_modules()
     while True:
         raw = input("> ").strip()
