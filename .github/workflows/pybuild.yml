@@ -25,11 +25,11 @@ jobs:
 
       - name: Read version from util/version.py
         id: version
+        shell: bash
         run: |
           VERSION=$(python - << 'EOF'
           import sys
           from pathlib import Path
-          # Add repo root to PYTHONPATH
           sys.path.insert(0, str(Path.cwd()))
           from util.version import __version__
           print(__version__)
