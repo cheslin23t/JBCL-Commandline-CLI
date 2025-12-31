@@ -122,6 +122,20 @@ def inv(user):
 def trade():
     import time
 
+    def parse_value(value_str):
+        if value_str in (None, "", "N/A"):
+            return None
+        value_str = value_str.lower().replace(",", "").strip()
+        try:
+            if value_str.endswith("k"):
+                return float(value_str[:-1]) * 1_000
+            elif value_str.endswith("m"):
+                return float(value_str[:-1]) * 1_000_000
+            else:
+                return float(value_str)
+        except:
+            return None
+
     def fetch_item_data(name):
         try:
             resp = requests.get(
@@ -238,8 +252,8 @@ def trade():
                     items.append({
                         "name": selected_item.get("name", ""),
                         "duped": is_duped,
-                        "cash_value": selected_item.get("cash_value", "N/A"),
-                        "duped_value": selected_item.get("duped_value", "N/A"),
+                        "cash_value": parse_value(selected_item.get("cash_value")),
+                        "duped_value": parse_value(selected_item.get("duped_value")),
                     })
                     print(f"Added item '{selected_item.get('name', '')}' - {'Duped' if is_duped else 'Clean'}")
                     break
@@ -268,34 +282,22 @@ def trade():
             reason = ""
 
             if duped:
-                if duped_val not in (None, "", "N/A"):
-                    try:
-                        used_value = float(duped_val)
-                        reason = f"Used duped_value ({duped_val}) because item is duped."
-                    except:
-                        used_value = 0
-                        reason = f"duped_value invalid, used 0."
-                elif cash_val not in (None, "", "N/A"):
-                    try:
-                        used_value = float(cash_val)
-                        reason = f"duped_value not available, used cash_value ({cash_val}) as fallback."
-                    except:
-                        used_value = 0
-                        reason = f"cash_value invalid, used 0."
+                if duped_val is not None:
+                    used_value = duped_val
+                    reason = f"Used duped_value ({duped_val}) because item is duped."
+                elif cash_val is not None:
+                    used_value = cash_val
+                    reason = f"duped_value unavailable, used cash_value ({cash_val}) as fallback."
                 else:
                     used_value = 0
-                    reason = f"No duped_value or cash_value available, used 0."
+                    reason = "No duped_value or cash_value, used 0."
             else:
-                if cash_val not in (None, "", "N/A"):
-                    try:
-                        used_value = float(cash_val)
-                        reason = f"Used cash_value ({cash_val}) because item is clean."
-                    except:
-                        used_value = 0
-                        reason = f"cash_value invalid, used 0."
+                if cash_val is not None:
+                    used_value = cash_val
+                    reason = f"Used cash_value ({cash_val}) because item is clean."
                 else:
                     used_value = 0
-                    reason = f"No cash_value available, used 0."
+                    reason = "No cash_value available, used 0."
 
             total += used_value
             thoughts.append(f"Item '{name}': {reason} Value counted: {used_value}")
