@@ -1,12 +1,17 @@
 # -*- mode: python ; coding: utf-8 -*-
+from PyInstaller.utils.hooks import collect_submodules
 
+# 1. Automatically find all modules inside the 'commands' package
+# This replaces the logic you had inside main.py
+hidden_imports = collect_submodules('commands')
 
 a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
     datas=[],
-    hiddenimports=[],
+    # 2. Add the collected modules here so PyInstaller includes them
+    hiddenimports=hidden_imports, 
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
