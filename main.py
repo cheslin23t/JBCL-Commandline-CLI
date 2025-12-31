@@ -5,7 +5,8 @@ import pkgutil
 import inspect
 from util.registry import COMMANDS
 from util.version import __version__
-
+from prompt_toolkit import PromptSession
+from prompt_toolkit.history import FileHistory
 # from PyInstaller.utils.hooks import collect_submodules
 
 # hiddenimports = collect_submodules('commands')
@@ -36,7 +37,7 @@ def load_command_modules():
     print("")
     if not any_module_loaded:
         print("Warning: No command modules were loaded. Try checking the PyInstaller spec file for correct data inclusion, or run the script directly without compiling.")
-        exit(1)
+        sys.exit(1)
 
 def main():
     greet = f"""
@@ -49,9 +50,14 @@ def main():
     print(greet)
 
     load_command_modules()
+    # Setup history file in user's home directory
+    history_file = os.path.join(os.path.expanduser("~"), ".jb-x_history")
+    session = PromptSession(history=FileHistory(history_file))
+
     while True:
         try:
-            raw = input("> ").strip()
+            # Use session.prompt() for arrow key support & history
+            raw = session.prompt("> ").strip()
         except (EOFError, KeyboardInterrupt):
             print("\nExiting...")
             break

@@ -1,16 +1,16 @@
 from util.registry import command
-
+import sys
 @command("quit", "Quit the application", "quit", ["q", "exit"])
 def quit_command(flags=None):
     flags = flags or []
     if "--force" in flags:
         print("Quitting the application...")
-        exit()
+        sys.exit(0)
         return
     i = input("Are you sure you want to quit? (y/N): ")
     if i.lower() == "y":
         print("Quitting the application...")
-        exit()
+        sys.exit(0)
     else:
         print("Quit cancelled.")
 
