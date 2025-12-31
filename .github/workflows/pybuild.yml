@@ -51,12 +51,12 @@ jobs:
         shell: bash
         run: |
           mkdir -p release
+          # Windows output is usually dist/jb-x.exe
           if [[ "${{ runner.os }}" == "Windows" ]]; then
             cp dist/*.exe release/
-          elif [[ "${{ runner.os }}" == "macOS" ]]; then
-            cp -R dist/*.app release/
+          # Mac/Linux output is usually dist/jb-x (no extension)
           else
-            cp dist/* release/
+            cp dist/jb-x release/ 
           fi
 
       - name: Upload artifact
