@@ -1,14 +1,27 @@
 # -*- mode: python ; coding: utf-8 -*-
+import sys
+import os
 from PyInstaller.utils.hooks import collect_submodules
 
+# 1. SETUP PATH
+# We must explicitly add the current directory to sys.path so PyInstaller
+# can find and import the 'commands' package to analyze it.
+sys.path.insert(0, os.path.abspath('.'))
+
+# 2. AUTOMATIC DETECTION
+# This helper function scans the 'commands' folder for all .py files.
+# It returns a list like ['commands.values', 'commands.cmd', ...].
+# By passing this list to 'hiddenimports' below, we force PyInstaller
+# to analyze every single command file. When it analyzes 'values.py',
+# it will SEE 'import requests' and automatically include the requests library.
 hidden_imports = collect_submodules('commands')
 
 a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('commands', 'commands')],  # <--- THIS IS THE CRITICAL FIX
-    hiddenimports=hidden_imports,
+    datas=[('commands', 'commands')],  # Keep physical files for pkgutil
+    hiddenimports=hidden_imports,      # <--- This is where the magic happens
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
