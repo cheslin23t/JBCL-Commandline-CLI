@@ -262,6 +262,8 @@ def trade():
                         "duped": is_duped,
                         "cash_value": parse_value(selected_item.get("cash_value")),
                         "duped_value": parse_value(selected_item.get("duped_value")),
+                        "demand": selected_item.get("demand", "N/A"),
+                        "trend": selected_item.get("trend", "N/A")
                     })
                     print(f"Added item '{selected_item.get('name', '')}' - {'Duped' if is_duped else 'Clean'}")
                     break
@@ -286,22 +288,26 @@ def trade():
             duped = it["duped"]
             cash_val = it.get("cash_value")
             duped_val = it.get("duped_value")
+            demand = it.get("demand", "N/A")
+            trend = it.get("trend", "N/A")
+
             used_value = 0
             indicator = "(0)"
+            value_used_str = ""
 
             if duped:
                 if duped_val is not None:
                     used_value = duped_val
-                    indicator = "(D)"
+                    indicator = "Duped Value Used"
                 elif cash_val is not None:
                     used_value = cash_val
-                    indicator = "(C)"
+                    indicator = "Clean Value Used"
             else:
                 if cash_val is not None:
                     used_value = cash_val
-                    indicator = "(C)"
+                    indicator = "Clean Value Used"
             total += used_value
-            summary.append(f"{name} {indicator} -> {format_value(used_value)}")
+            summary.append(f"{name} {'(D)' if duped else '(C)'}: {format_value(used_value)} <- {indicator} | Demand: {demand} | Trend: {trend}")
         return total, summary
 
     your_total, your_summary = calculate_total_and_summary(your_items)
