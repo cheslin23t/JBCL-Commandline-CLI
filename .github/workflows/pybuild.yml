@@ -8,6 +8,8 @@ on:
 
 jobs:
   build:
+    outputs:
+      version: ${{ steps.version.outputs.version }}
     strategy:
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
@@ -25,6 +27,10 @@ jobs:
         id: version
         run: |
           VERSION=$(python - << 'EOF'
+          import sys
+          from pathlib import Path
+          # Add repo root to PYTHONPATH
+          sys.path.insert(0, str(Path.cwd()))
           from util.version import __version__
           print(__version__)
           EOF
