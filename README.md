@@ -183,7 +183,7 @@ PLEASE don't ruin it for all of us. Be respectful to the JBCL API and follow all
 
 ## 📇 Contact
 
-- [Discord](discord://-/users/1334576002520846376) (cologneishim)
+- Discord: cologneishim (Or paste discord://-/users/1334576002520846376 into your browser)
 
 ---
 
