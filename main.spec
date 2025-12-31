@@ -1,8 +1,6 @@
 # -*- mode: python ; coding: utf-8 -*-
 from PyInstaller.utils.hooks import collect_submodules
 
-# 1. Automatically find all modules inside the 'commands' package
-# This replaces the logic you had inside main.py
 hidden_imports = collect_submodules('commands')
 
 a = Analysis(
@@ -10,8 +8,7 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[],
-    # 2. Add the collected modules here so PyInstaller includes them
-    hiddenimports=hidden_imports, 
+    hiddenimports=hidden_imports,
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -24,26 +21,20 @@ pyz = PYZ(a.pure)
 exe = EXE(
     pyz,
     a.scripts,
+    a.binaries,
+    a.datas,
     [],
-    exclude_binaries=True,
-    name='main',
+    name='jb-x',  # I renamed this to jb-x for clarity
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
+    upx_exclude=[],
+    runtime_tmpdir=None,
     console=True,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-)
-coll = COLLECT(
-    exe,
-    a.binaries,
-    a.datas,
-    strip=False,
-    upx=True,
-    upx_exclude=[],
-    name='main',
 )
