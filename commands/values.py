@@ -1,62 +1,60 @@
 from util.registry import command
 import requests
-@command("value", "Shows the value of an item", "value <name> [dupe]", ["v", "val", "item", "it", "itm"])
-def values(name):
-    item = requests.get(f"https://api.jailbreakchangelogs.xyz/items/get", params={"name": name})
-    if item.status_code != 200:
-        print(f"Error fetching item: {item.status_code}")
-        return
-    item_data = item.json()
-    # If multiple items are returned, prompt the user to select one
-    if not isinstance(item_data, list) or len(item_data) == 0:
-        print("No items found.")
-        return
+@command("value", "Shows the value of item(s)", "value <name...>", ["v", "val", "item", "it", "itm"])
+def values(*names):
 
-    # If exactly one match, select it automatically
-    if len(item_data) == 1:
-        selected = item_data[0]
-    else:
-        print("Multiple items found:")
-        for i, entry in enumerate(item_data, start=1):
-            print(f"{i}. {entry['name']} ({entry['type']})")
+    for name in names:
+        print(f"\n=== {name} ===")
+        item = requests.get(
+            "https://api.jailbreakchangelogs.xyz/items/get",
+            params={"name": name},
+        )
 
-        while True:
-            choice = input("Select an item by number: ").strip()
-            if not choice.isdigit():
-                print("Please enter a valid number.")
-                continue
-            idx = int(choice) - 1
-            if 0 <= idx < len(item_data):
-                selected = item_data[idx]
-                break
-            else:
-                print("Selection out of range.")
+        if item.status_code != 200:
+            print(f"Error fetching item '{name}': {item.status_code}")
+            continue
 
-    # Display selected item data (focused fields)
-    print("\n=== Item Details ===")
-    print(f"Name: {selected.get('name', 'N/A')}")
-    print(f"Type: {selected.get('type', 'N/A')}")
-    print(f"Cash Value: {selected.get('cash_value', 'N/A')}")
-    print(f"Duped Value: {selected.get('duped_value', 'N/A')}")
-    print(f"Demand: {selected.get('demand', 'N/A')}")
-    print(f"Trend: {selected.get('trend', 'N/A')}")
+        item_data = item.json()
 
-    notes = selected.get('notes')
-    if notes and notes != 'N/A':
-        print(f"Notes: {notes}")
+        if not isinstance(item_data, list) or len(item_data) == 0:
+            print("No items found.")
+            continue
 
-    # Display metadata separately if present
-    # if "metadata" in selected and isinstance(selected["metadata"], dict):
-    #     print("\n--- Metadata ---")
-    #     for key, value in selected["metadata"].items():
-    #         print(f"{key}: {value}")
+        # If exactly one match, select it automatically
+        if len(item_data) == 1:
+            selected = item_data[0]
+        else:
+            print("Multiple items found:")
+            for i, entry in enumerate(item_data, start=1):
+                print(f"{i}. {entry['name']} ({entry['type']})")
+
+            while True:
+                choice = input("Select an item by number: ").strip()
+                if not choice.isdigit():
+                    print("Please enter a valid number.")
+                    continue
+                idx = int(choice) - 1
+                if 0 <= idx < len(item_data):
+                    selected = item_data[idx]
+                    break
+                else:
+                    print("Selection out of range.")
+
+        print("Name:", selected.get("name", "N/A"))
+        print("Type:", selected.get("type", "N/A"))
+        print("Cash Value:", selected.get("cash_value", "N/A"))
+        print("Duped Value:", selected.get("duped_value", "N/A"))
+        print("Demand:", selected.get("demand", "N/A"))
+        print("Trend:", selected.get("trend", "N/A"))
+
+        notes = selected.get("notes")
+        if notes and notes != "N/A":
+            print("Notes:", notes)
+
 @command("dupe", "Reveals whether an item is a dupe", "dupe <username...>", ["du", "d"])
 def item(*usernames):
     import time
 
-    if not usernames:
-        print("Please provide at least one username or user ID.")
-        return
     total_dupes = []
     for username in usernames:
         print(f"\n=== {username} ===")
@@ -119,3 +117,177 @@ def item(*usernames):
 @command("inventory", "Shows the inventory of a user.", "inventory <user>", ["inv", "in"])
 def inv(user):
     print(f"Example {user}")
+
+@command("trade", "Interactively evaluate a trade between you and another user.", "trade", ["tr", "calculate", "calc", "c", "t"])
+def trade():
+    import time
+
+    def fetch_item_data(name):
+        try:
+            resp = requests.get(
+                "https://api.jailbreakchangelogs.xyz/items/get",
+                params={"name": name},
+            )
+            if resp.status_code != 200:
+                print(f"Error fetching item '{name}': {resp.status_code}")
+                return None
+            data = resp.json()
+            if not isinstance(data, list) or len(data) == 0:
+                print(f"No items found for '{name}'.")
+                return None
+            if len(data) == 1:
+                return data[0]
+            else:
+                print(f"Multiple items found for '{name}':")
+                for i, entry in enumerate(data, start=1):
+                    print(f"{i}. {entry['name']} ({entry['type']})")
+                while True:
+                    choice = input("Select an item by number: ").strip()
+                    if not choice.isdigit():
+                        print("Please enter a valid number.")
+                        continue
+                    idx = int(choice) - 1
+                    if 0 <= idx < len(data):
+                        return data[idx]
+                    else:
+                        print("Selection out of range.")
+        except Exception as e:
+            print(f"Error fetching item '{name}': {e}")
+            return None
+
+    def fetch_dupes_for_user(username):
+        if username.isdecimal():
+            user_id = username
+        else:
+            print(f"Fetching user ID for {username}...")
+            resp = requests.post(
+                "https://inventories.jailbreakchangelogs.xyz/proxy/users",
+                json={"usernames": [username], "excludeBannedUser": True},
+            )
+            if resp.status_code != 200:
+                print(f"Error fetching user ID for {username}: {resp.status_code}")
+                return None
+            data = resp.json()
+            if not data.get("data"):
+                print(f"User not found: {username}")
+                return None
+            user_id = str(data["data"][0]["id"])
+        print(f"User ID: {user_id}")
+        resp = requests.get(
+            "https://inventories.jailbreakchangelogs.xyz/users/dupes",
+            params={"id": user_id},
+        )
+        if resp.status_code == 404:
+            return []
+        if resp.status_code != 200:
+            print(f"Error fetching dupes for {username}: {resp.status_code}")
+            return None
+        return resp.json()
+
+    def is_item_duped(title, dupes_list):
+        for dupe in dupes_list:
+            if dupe.get("title", "").lower() == title.lower():
+                return True
+        return False
+
+    def input_items(side_name):
+        print(f"\nEnter items for {side_name} side. Input empty line when done.")
+        items = []
+        while True:
+            line = input("> ").strip()
+            if line == "":
+                break
+            # Parse input
+            # Formats:
+            # d jav -> duped item
+            # c torp -> clean item
+            # jav@username -> fetch duped info for that username
+            duped_flag = None
+            username_for_dupes = None
+            item_name = None
+            parts = line.split()
+            if len(parts) == 2 and parts[0].lower() in ("d", "c"):
+                duped_flag = parts[0].lower() == "d"
+                item_name = parts[1]
+            elif "@" in line:
+                # e.g. jav@username
+                item_name, username_for_dupes = line.split("@", 1)
+            else:
+                # just item name, assume clean
+                duped_flag = False
+                item_name = line
+
+            # If username_for_dupes is set, fetch dupes for that user and check if item is duped
+            if username_for_dupes:
+                dupes = fetch_dupes_for_user(username_for_dupes)
+                if dupes is None:
+                    print(f"Could not fetch dupes for user '{username_for_dupes}'. Skipping item.")
+                    continue
+                selected_item = fetch_item_data(item_name)
+                if not selected_item:
+                    continue
+                is_duped = is_item_duped(selected_item.get("name", ""), dupes)
+                items.append({
+                    "name": selected_item.get("name", ""),
+                    "duped": is_duped,
+                    "cash_value": selected_item.get("cash_value", 0),
+                    "duped_value": selected_item.get("duped_value", 0),
+                })
+                print(f"Added item '{selected_item.get('name', '')}' from user '{username_for_dupes}' - {'Duped' if is_duped else 'Clean'}")
+            else:
+                # Use duped_flag and item_name
+                selected_item = fetch_item_data(item_name)
+                if not selected_item:
+                    continue
+                items.append({
+                    "name": selected_item.get("name", ""),
+                    "duped": duped_flag,
+                    "cash_value": selected_item.get("cash_value", 0),
+                    "duped_value": selected_item.get("duped_value", 0),
+                })
+                print(f"Added item '{selected_item.get('name', '')}' - {'Duped' if duped_flag else 'Clean'}")
+            time.sleep(0.3)  # rate limit
+        return items
+
+    print("Enter your side items:")
+    your_items = input_items("your")
+    print("Enter their side items:")
+    their_items = input_items("their")
+
+    def calculate_total(items):
+        total_clean = 0
+        total_duped = 0
+        for it in items:
+            if it["duped"]:
+                try:
+                    val = float(it["duped_value"])
+                except Exception:
+                    val = 0
+                total_duped += val
+            else:
+                try:
+                    val = float(it["cash_value"])
+                except Exception:
+                    val = 0
+                total_clean += val
+        return total_clean, total_duped
+
+    your_clean, your_duped = calculate_total(your_items)
+    their_clean, their_duped = calculate_total(their_items)
+
+    print("\n=== Trade Summary ===")
+    print("Your side:")
+    for it in your_items:
+        status = "Duped" if it["duped"] else "Clean"
+        print(f"- {it['name']} ({status})")
+    print(f"Total Clean Value: {your_clean}")
+    print(f"Total Duped Value: {your_duped}")
+
+    print("\nTheir side:")
+    for it in their_items:
+        status = "Duped" if it["duped"] else "Clean"
+        print(f"- {it['name']} ({status})")
+    print(f"Total Clean Value: {their_clean}")
+    print(f"Total Duped Value: {their_duped}")
+
+    print("\nNote: Duped items generally have lower value.")
