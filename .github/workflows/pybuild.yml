@@ -73,14 +73,25 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/download-artifact@v4
         with:
           path: artifacts
+
+      - name: Rename and Prepare Assets
+        run: |
+          mkdir release_assets
+          # We rename the files so they can all exist in the same release
+          # Note: Adjust names if your binary output name in main.spec is different
+          cp artifacts/jb-x-Linux/jb-x release_assets/jb-x-linux
+          cp artifacts/jb-x-macOS/jb-x release_assets/jb-x-macos
+          cp artifacts/jb-x-Windows/jb-x.exe release_assets/jb-x-windows.exe
 
       - name: Create tag
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
+          # We manually add the 'v' here since you removed it from version.py
           git tag v${{ needs.build.outputs.version }}
           git push origin v${{ needs.build.outputs.version }}
         env:
@@ -91,6 +102,6 @@ jobs:
         with:
           tag_name: v${{ needs.build.outputs.version }}
           name: JB-X v${{ needs.build.outputs.version }}
-          files: artifacts/**/*
+          files: release_assets/* # Uploads the renamed files
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # dm me on discord if u see this: cologneishim
