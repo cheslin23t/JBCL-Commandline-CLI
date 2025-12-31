@@ -194,7 +194,7 @@ def trade():
         print(f"\nEnter items for {side_name} side. Input empty line when done.")
         items = []
         while True:
-            line = input("> ").strip()
+            line = input(": ").strip()
             if line == "":
                 break
             # Parse input
@@ -210,14 +210,12 @@ def trade():
                 duped_flag = parts[0].lower() == "d"
                 item_name = parts[1]
             elif "@" in line:
-                # e.g. jav@username
                 item_name, username_for_dupes = line.split("@", 1)
             else:
-                # just item name, assume clean
                 duped_flag = False
                 item_name = line
 
-            # If username_for_dupes is set, fetch dupes for that user and check if item is duped
+            # Fetch item and determine duped status
             if username_for_dupes:
                 dupes = fetch_dupes_for_user(username_for_dupes)
                 if dupes is None:
@@ -227,25 +225,29 @@ def trade():
                 if not selected_item:
                     continue
                 is_duped = is_item_duped(selected_item.get("name", ""), dupes)
-                items.append({
-                    "name": selected_item.get("name", ""),
-                    "duped": is_duped,
-                    "cash_value": selected_item.get("cash_value", 0),
-                    "duped_value": selected_item.get("duped_value", 0),
-                })
-                print(f"Added item '{selected_item.get('name', '')}' from user '{username_for_dupes}' - {'Duped' if is_duped else 'Clean'}")
             else:
-                # Use duped_flag and item_name
                 selected_item = fetch_item_data(item_name)
                 if not selected_item:
                     continue
-                items.append({
-                    "name": selected_item.get("name", ""),
-                    "duped": duped_flag,
-                    "cash_value": selected_item.get("cash_value", 0),
-                    "duped_value": selected_item.get("duped_value", 0),
-                })
-                print(f"Added item '{selected_item.get('name', '')}' - {'Duped' if duped_flag else 'Clean'}")
+                is_duped = duped_flag
+
+            # Confirm addition
+            while True:
+                confirm = input(f"Add item '{selected_item.get('name', '')}' - {'Duped' if is_duped else 'Clean'}? (y/n): ").strip().lower()
+                if confirm in ("y", "yes"):
+                    items.append({
+                        "name": selected_item.get("name", ""),
+                        "duped": is_duped,
+                        "cash_value": selected_item.get("cash_value", "N/A"),
+                        "duped_value": selected_item.get("duped_value", "N/A"),
+                    })
+                    print(f"Added item '{selected_item.get('name', '')}' - {'Duped' if is_duped else 'Clean'}")
+                    break
+                elif confirm in ("n", "no"):
+                    print(f"Skipped item '{selected_item.get('name', '')}'.")
+                    break
+                else:
+                    print("Please enter 'y' or 'n'.")
             time.sleep(0.3)  # rate limit
         return items
 
@@ -254,40 +256,73 @@ def trade():
     print("Enter their side items:")
     their_items = input_items("their")
 
-    def calculate_total(items):
-        total_clean = 0
-        total_duped = 0
+    def calculate_total_and_thoughts(items):
+        total = 0
+        thoughts = []
         for it in items:
-            if it["duped"]:
-                try:
-                    val = float(it["duped_value"])
-                except Exception:
-                    val = 0
-                total_duped += val
-            else:
-                try:
-                    val = float(it["cash_value"])
-                except Exception:
-                    val = 0
-                total_clean += val
-        return total_clean, total_duped
+            name = it["name"]
+            duped = it["duped"]
+            cash_val = it.get("cash_value")
+            duped_val = it.get("duped_value")
+            used_value = 0
+            reason = ""
 
-    your_clean, your_duped = calculate_total(your_items)
-    their_clean, their_duped = calculate_total(their_items)
+            if duped:
+                if duped_val not in (None, "", "N/A"):
+                    try:
+                        used_value = float(duped_val)
+                        reason = f"Used duped_value ({duped_val}) because item is duped."
+                    except:
+                        used_value = 0
+                        reason = f"duped_value invalid, used 0."
+                elif cash_val not in (None, "", "N/A"):
+                    try:
+                        used_value = float(cash_val)
+                        reason = f"duped_value not available, used cash_value ({cash_val}) as fallback."
+                    except:
+                        used_value = 0
+                        reason = f"cash_value invalid, used 0."
+                else:
+                    used_value = 0
+                    reason = f"No duped_value or cash_value available, used 0."
+            else:
+                if cash_val not in (None, "", "N/A"):
+                    try:
+                        used_value = float(cash_val)
+                        reason = f"Used cash_value ({cash_val}) because item is clean."
+                    except:
+                        used_value = 0
+                        reason = f"cash_value invalid, used 0."
+                else:
+                    used_value = 0
+                    reason = f"No cash_value available, used 0."
+
+            total += used_value
+            thoughts.append(f"Item '{name}': {reason} Value counted: {used_value}")
+        return total, thoughts
+
+    your_total, your_thoughts = calculate_total_and_thoughts(your_items)
+    their_total, their_thoughts = calculate_total_and_thoughts(their_items)
 
     print("\n=== Trade Summary ===")
     print("Your side:")
     for it in your_items:
         status = "Duped" if it["duped"] else "Clean"
         print(f"- {it['name']} ({status})")
-    print(f"Total Clean Value: {your_clean}")
-    print(f"Total Duped Value: {your_duped}")
+    print(f"Total Monetary Value: {your_total}")
 
     print("\nTheir side:")
     for it in their_items:
         status = "Duped" if it["duped"] else "Clean"
         print(f"- {it['name']} ({status})")
-    print(f"Total Clean Value: {their_clean}")
-    print(f"Total Duped Value: {their_duped}")
+    print(f"Total Monetary Value: {their_total}")
+
+    print("\nDetailed Thought Process:")
+    print("\nYour side:")
+    for thought in your_thoughts:
+        print(f"- {thought}")
+    print("\nTheir side:")
+    for thought in their_thoughts:
+        print(f"- {thought}")
 
     print("\nNote: Duped items generally have lower value.")
