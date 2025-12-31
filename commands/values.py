@@ -136,6 +136,14 @@ def trade():
         except:
             return None
 
+    def format_value(num):
+        if num >= 1_000_000:
+            return f"{num/1_000_000:.2f}M"
+        elif num >= 1_000:
+            return f"{num/1_000:.1f}K"
+        else:
+            return str(int(num))
+
     def fetch_item_data(name):
         try:
             resp = requests.get(
@@ -247,7 +255,7 @@ def trade():
 
             # Confirm addition
             while True:
-                confirm = input(f"Add item '{selected_item.get('name', '')}' - {'Duped' if is_duped else 'Clean'}? (y/n): ").strip().lower()
+                confirm = input(f"Add '{selected_item.get('name', '')}' - {'Duped' if is_duped else 'Clean'}? (y/n): ").strip().lower()
                 if confirm in ("y", "yes"):
                     items.append({
                         "name": selected_item.get("name", ""),
@@ -270,61 +278,42 @@ def trade():
     print("Enter their side items:")
     their_items = input_items("their")
 
-    def calculate_total_and_thoughts(items):
+    def calculate_total_and_summary(items):
         total = 0
-        thoughts = []
+        summary = []
         for it in items:
             name = it["name"]
             duped = it["duped"]
             cash_val = it.get("cash_value")
             duped_val = it.get("duped_value")
             used_value = 0
-            reason = ""
+            indicator = "(0)"
 
             if duped:
                 if duped_val is not None:
                     used_value = duped_val
-                    reason = f"Used duped_value ({duped_val}) because item is duped."
+                    indicator = "(D)"
                 elif cash_val is not None:
                     used_value = cash_val
-                    reason = f"duped_value unavailable, used cash_value ({cash_val}) as fallback."
-                else:
-                    used_value = 0
-                    reason = "No duped_value or cash_value, used 0."
+                    indicator = "(C)"
             else:
                 if cash_val is not None:
                     used_value = cash_val
-                    reason = f"Used cash_value ({cash_val}) because item is clean."
-                else:
-                    used_value = 0
-                    reason = "No cash_value available, used 0."
-
+                    indicator = "(C)"
             total += used_value
-            thoughts.append(f"Item '{name}': {reason} Value counted: {used_value}")
-        return total, thoughts
+            summary.append(f"{name} {indicator} -> {format_value(used_value)}")
+        return total, summary
 
-    your_total, your_thoughts = calculate_total_and_thoughts(your_items)
-    their_total, their_thoughts = calculate_total_and_thoughts(their_items)
+    your_total, your_summary = calculate_total_and_summary(your_items)
+    their_total, their_summary = calculate_total_and_summary(their_items)
 
     print("\n=== Trade Summary ===")
     print("Your side:")
-    for it in your_items:
-        status = "Duped" if it["duped"] else "Clean"
-        print(f"- {it['name']} ({status})")
-    print(f"Total Monetary Value: {your_total}")
+    for s in your_summary:
+        print(f"- {s}")
+    print(f"Total: {format_value(your_total)}")
 
     print("\nTheir side:")
-    for it in their_items:
-        status = "Duped" if it["duped"] else "Clean"
-        print(f"- {it['name']} ({status})")
-    print(f"Total Monetary Value: {their_total}")
-
-    print("\nDetailed Thought Process:")
-    print("\nYour side:")
-    for thought in your_thoughts:
-        print(f"- {thought}")
-    print("\nTheir side:")
-    for thought in their_thoughts:
-        print(f"- {thought}")
-
-    print("\nNote: Duped items generally have lower value.")
+    for s in their_summary:
+        print(f"- {s}")
+    print(f"Total: {format_value(their_total)}")
