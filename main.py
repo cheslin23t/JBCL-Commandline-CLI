@@ -3,6 +3,10 @@ import pkgutil
 import inspect
 from util.registry import COMMANDS
 
+from PyInstaller.utils.hooks import collect_submodules
+
+hiddenimports = collect_submodules('commands')
+
 def load_command_modules():
     import commands
     print("Loading command modules...")
