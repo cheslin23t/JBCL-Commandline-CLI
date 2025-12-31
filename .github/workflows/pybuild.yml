@@ -82,21 +82,21 @@ jobs:
         run: |
           mkdir release_assets
 
-          # 1. Windows:
-          # Just copy the exe. It's already double-clickable.
+          # 1. Windows
           cp artifacts/jb-x-Windows/jb-x.exe release_assets/jb-x.exe
 
-          # 2. Linux:
-          # Standard binary name.
+          # 2. Linux
           cp artifacts/jb-x-Linux/jb-x release_assets/jb-x-linux
+          chmod +x release_assets/jb-x-linux  # Make sure Linux users get permission too
 
-          # 3. macOS (THE FIX):
-          # First, rename it to .command so Finder knows it's a script.
+          # 3. macOS (THE FIX)
+          # Move file to current directory as .command
           cp artifacts/jb-x-macOS/jb-x jb-x.command
           
-          # Second, ZIP IT. 
-          # Downloading a raw file removes permissions. Zipping keeps them.
-          # The user will download the zip, extract it, and double-click the .command file.
+          # FORCE executable permission before zipping
+          chmod +x jb-x.command
+          
+          # Zip it. The zip will now remember "this file is executable"
           zip release_assets/jb-x-macos.zip jb-x.command
 
       - name: Create tag
@@ -113,6 +113,6 @@ jobs:
         with:
           tag_name: v${{ needs.build.outputs.version }}
           name: JB-X v${{ needs.build.outputs.version }}
-          files: release_assets/* # This will upload the exe, linux binary, and macos zip
+          files: release_assets/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # dm me on discord if u see this: cologneishim
