@@ -255,7 +255,7 @@ def trade():
 
             # Confirm addition
             while True:
-                confirm = input(f"Adding '{selected_item.get('name', '')}' - {'Duped' if is_duped else 'Clean'}... (C to cancel)").strip().lower()
+                confirm = input(f"Adding '{selected_item.get('name', '')}' - {'Duped' if is_duped else 'Clean'}... (C to cancel): ").strip().lower()
                 if confirm not in ("c", "cancel"):
                     items.append({
                         "name": selected_item.get("name", ""),
