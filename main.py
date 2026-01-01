@@ -11,27 +11,27 @@ from prompt_toolkit.history import FileHistory
 from util.updater import REPO_NAME, REPO_OWNER
 # from PyInstaller.utils.hooks import collect_submodules
 
-# hiddenimports = collect_submodules('commands')
+# hiddenimports = collect_submodules('modules')
 
 def load_command_modules():
-    import commands
+    import modules
     print("\nLoading command modules...\n")
 
     # Default search path (works locally)
-    search_path = commands.__path__
+    search_path = modules.__path__
 
     # FIX: If running as compiled exe, force search in the extracted folder
     if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
-        search_path = [os.path.join(sys._MEIPASS, 'commands')]
+        search_path = [os.path.join(sys._MEIPASS, 'modules')]
     any_module_loaded = False
     for _, module_name, _ in pkgutil.iter_modules(search_path):
         any_module_loaded = True
         if module_name.startswith("_"):
             continue
-        importlib.import_module(f"commands.{module_name}")
+        importlib.import_module(f"modules.{module_name}")
         # print(f"Importing module {module_name}")
         try:
-            importlib.import_module(f"commands.{module_name}")
+            importlib.import_module(f"modules.{module_name}")
             print(f"Successfully imported module {module_name}")
         except Exception as e:
             print(f"Failed to import module {module_name}: {e}")
