@@ -9,10 +9,6 @@ from util.updater import check_for_updates
 from prompt_toolkit import PromptSession
 from prompt_toolkit.history import FileHistory
 from util.updater import REPO_NAME, REPO_OWNER
-# from PyInstaller.utils.hooks import collect_submodules
-
-# hiddenimports = collect_submodules('modules')
-
 def load_command_modules():
     import modules
     print("\nLoading command modules...\n")
