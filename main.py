@@ -4,17 +4,18 @@ import importlib
 import pkgutil
 import inspect
 from util.registry import COMMANDS
-from util.version import __version__
+from util.version import __version__, __production__
+from util.updater import check_for_updates
 from prompt_toolkit import PromptSession
 from prompt_toolkit.history import FileHistory
+from util.updater import REPO_NAME, REPO_OWNER
 # from PyInstaller.utils.hooks import collect_submodules
 
 # hiddenimports = collect_submodules('commands')
 
 def load_command_modules():
     import commands
-    print("Loading command modules...")
-    print("")
+    print("\nLoading command modules...\n")
 
     # Default search path (works locally)
     search_path = commands.__path__
@@ -40,15 +41,18 @@ def load_command_modules():
         sys.exit(1)
 
 def main():
-    greet = f"""
+    greet1 = f"""
+JBCL Command Line Interface v{__version__} ({"Development" if not __production__ else "Production"} Build)
+    {f"You are running a development build. Please report any issues you encounter: https://github.com/{REPO_OWNER}/{REPO_NAME}/issues" if not __production__ else ""}"""
 
-    JBCL Command Line Interface v{__version__}
-    Type 'help' for a list of commands.
+    greet2 = """    Type 'help' for a list of commands.
     Type '<command> --help' for usage.
-    Type 'exit' to quit.
-    """
+    Type 'exit' to quit."""
+    print(greet1)
     load_command_modules()
-    print(greet)
+    if check_for_updates() == False:
+        print("Failed to check for updates. Please check your internet connection.\nThis app will continue to run, however internet access is required for certain features.\n")
+    print(greet2)
     # Setup history file in user's home directory
     history_file = os.path.join(os.path.expanduser("~"), ".jb-x_history")
     session = PromptSession(history=FileHistory(history_file))

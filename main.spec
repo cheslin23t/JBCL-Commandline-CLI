@@ -14,8 +14,7 @@ sys.path.insert(0, os.path.abspath('.'))
 # By passing this list to 'hiddenimports' below, we force PyInstaller
 # to analyze every single command file. When it analyzes 'values.py',
 # it will SEE 'import requests' and automatically include the requests library.
-hidden_imports = collect_submodules('commands')
-
+hidden_imports = collect_submodules('commands') + ['packaging']
 a = Analysis(
     ['main.py'],
     pathex=[],
