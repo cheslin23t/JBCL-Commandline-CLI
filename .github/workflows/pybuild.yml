@@ -10,6 +10,7 @@ jobs:
   build:
     outputs:
       version: ${{ steps.version.outputs.version }}
+      is_prod: ${{ steps.version.outputs.is_prod }}
     strategy:
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
@@ -23,19 +24,34 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Read version from util/version.py
+      - name: Read version and production status
         id: version
         shell: bash
         run: |
-          VERSION=$(python - << 'EOF'
+          # Python script to extract version AND production boolean
+          # Outputs format: VERSION|IS_PROD (e.g., 0.9.2|False)
+          OUTPUT=$(python - << 'EOF'
           import sys
           from pathlib import Path
           sys.path.insert(0, str(Path.cwd()))
-          from util.version import __version__
-          print(__version__)
+          import util.version
+          
+          # Default to True (Production) if variable is missing to be safe
+          is_prod = getattr(util.version, '__production__', True)
+          print(f"{util.version.__version__}|{is_prod}")
           EOF
           )
+          
+          # Parse the output
+          VERSION=$(echo "$OUTPUT" | cut -d'|' -f1)
+          IS_PROD=$(echo "$OUTPUT" | cut -d'|' -f2)
+          
+          echo "Detected Version: $VERSION"
+          echo "Is Production: $IS_PROD"
+          
+          # Save to GitHub Outputs
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "is_prod=$IS_PROD" >> $GITHUB_OUTPUT
 
       - name: Install dependencies
         run: |
@@ -114,5 +130,6 @@ jobs:
           tag_name: v${{ needs.build.outputs.version }}
           name: JB-X v${{ needs.build.outputs.version }}
           files: release_assets/*
+          prerelease: ${{ needs.build.outputs.is_prod == 'False' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # dm me on discord if u see this: cologneishim
