@@ -33,5 +33,5 @@ def help_command(command_name=None):
             if cmd['name'] in listed:
                 continue
             listed.add(cmd['name'])
-            print(f"- {cmd['name']}: {cmd['description']}")
+            print(f"- {cmd['name']}: {cmd['description']}. Usage: {cmd['usage']}. Aliases: {', '.join(cmd.get('aliases', []))}")
     print("")

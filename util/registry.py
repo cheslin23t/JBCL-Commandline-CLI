@@ -25,6 +25,7 @@ def command(name, description, usage, aliases=None):
             "description": description,
             "usage": usage,
             "name": name,
+            "aliases": aliases
         }
 
         COMMANDS[name] = metadata

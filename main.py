@@ -28,7 +28,7 @@ def load_command_modules():
         if module_name.startswith("_"):
             continue
         importlib.import_module(f"commands.{module_name}")
-        print(f"Importing module {module_name}")
+        # print(f"Importing module {module_name}")
         try:
             importlib.import_module(f"commands.{module_name}")
             print(f"Successfully imported module {module_name}")
@@ -41,21 +41,21 @@ def load_command_modules():
 
 def main():
     greet = f"""
+
     JBCL Command Line Interface v{__version__}
     Type 'help' for a list of commands.
     Type '<command> --help' for usage.
     Type 'exit' to quit.
-
     """
-    print(greet)
-
     load_command_modules()
+    print(greet)
     # Setup history file in user's home directory
     history_file = os.path.join(os.path.expanduser("~"), ".jb-x_history")
     session = PromptSession(history=FileHistory(history_file))
 
     while True:
         try:
+            print("")  # Blank line for readability
             # Use session.prompt() for arrow key support & history
             raw = session.prompt("> ").strip()
         except (EOFError, KeyboardInterrupt):

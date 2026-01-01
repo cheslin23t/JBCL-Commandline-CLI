@@ -114,11 +114,11 @@ def item(*usernames):
         return
     for entry in total_dupes:
         print(f"- {entry}")
-@command("inventory", "Shows the inventory of a user.", "inventory <user>", ["inv", "in"])
+@command("inventory", "Shows the inventory of a user [Placeholder]", "inventory <user>", ["inv", "in"])
 def inv(user):
-    print(f"Example {user}")
+    print(f"Command not yet implemented: inventory for user '{user}'")
 
-@command("trade", "Interactively evaluate a trade between you and another user.", "trade", ["tr", "calculate", "calc", "c", "t"])
+@command("trade", "Evaluates a trade between you and another user", "trade", ["tr", "calculate", "calc", "c", "t"])
 def trade():
     import time
 
@@ -255,8 +255,8 @@ def trade():
 
             # Confirm addition
             while True:
-                confirm = input(f"Add '{selected_item.get('name', '')}' - {'Duped' if is_duped else 'Clean'}? (y/n): ").strip().lower()
-                if confirm in ("y", "yes"):
+                confirm = input(f"Adding '{selected_item.get('name', '')}' - {'Duped' if is_duped else 'Clean'}... (C to cancel)").strip().lower()
+                if confirm not in ("c", "cancel"):
                     items.append({
                         "name": selected_item.get("name", ""),
                         "duped": is_duped,
@@ -267,12 +267,10 @@ def trade():
                     })
                     print(f"Added item '{selected_item.get('name', '')}' - {'Duped' if is_duped else 'Clean'}")
                     break
-                elif confirm in ("n", "no"):
+                else:
                     print(f"Skipped item '{selected_item.get('name', '')}'.")
                     break
-                else:
-                    print("Please enter 'y' or 'n'.")
-            time.sleep(0.3)  # rate limit
+            time.sleep(0.5)  # rate limit
         return items
 
     print("Enter your side items:")
@@ -293,7 +291,6 @@ def trade():
 
             used_value = 0
             indicator = "(0)"
-            value_used_str = ""
 
             if duped:
                 if duped_val is not None:
