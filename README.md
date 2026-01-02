@@ -7,7 +7,7 @@
 
 A Python-based CLI and API interface for querying **Roblox Jailbreak item data**, values, trends, and changelog information. Designed to be **modular**, **extensible**, and **developer-friendly**.
 
-[Latest Release](https://github.com/cheslin23t/JBCL-Commandline-CLI/releases/latest/)
+[Latest Stable Release](https://github.com/cheslin23t/JBCL-Commandline-CLI/releases/latest/)
 
 ---
 
