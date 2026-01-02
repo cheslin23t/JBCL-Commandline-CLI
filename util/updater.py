@@ -55,6 +55,7 @@ def check_for_updates():
             if choice == 'y':
                 print(f"   Opening {html_url}...")
                 webbrowser.open(html_url)
+                exit(0)
             print("\n")
             return True
         print(f"On latest version. (v{current_version})\n")
