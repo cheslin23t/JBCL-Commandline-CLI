@@ -1,7 +1,7 @@
 import requests
 import webbrowser
 import os
-from packaging import version
+import semver
 from util.version import __version__ as current_version, __production__
 import dotenv
 dotenv.load_dotenv()
@@ -43,7 +43,7 @@ def check_for_updates():
         # Strip 'v' if present (e.g. v1.0.0 -> 1.0.0)
         clean_latest = latest_tag.lstrip("v")
         
-        if version.parse(clean_latest) > version.parse(current_version):
+        if semver.Version.parse(clean_latest) > semver.Version.parse(current_version):
             release_type = "PRE-RELEASE" if is_prerelease else "UPDATE"
             
             print("\n" + "="*50)
