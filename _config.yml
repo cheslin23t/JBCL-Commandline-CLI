@@ -1,0 +1,4 @@
+# GitHub Pages configuration
+# This file ensures GitHub Pages serves the static web interface correctly
+
+destination: web
