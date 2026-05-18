@@ -1,6 +1,6 @@
 /**
- * JBCL Web Interface - Modern JavaScript
- * Clean API integration with CORS proxy support
+ * JBCL Web Interface - Uses local proxy on ches.dev
+ * Clean API integration via your Cloudflare Worker
  */
 
 (function() {
@@ -10,22 +10,8 @@
     // Configuration
     // ========================================
     const CONFIG = {
-        // Use a CORS proxy to avoid cross-origin issues
-        // This proxy forwards requests and adds CORS headers
-        PROXY_URL: 'https://corsproxy.io/?',
-        
-        // Or use your own proxy - these are common public CORS proxies
-        // You can also deploy your own: https://github.com/rubik/cors-anywhere
-        PROXY_ENDPOINTS: [
-            'https://corsproxy.io/?',
-            'https://api.allorigins.win/raw?url=',
-        ],
-        
-        API_ENDPOINTS: {
-            items: 'https://api.jailbreakchangelogs.xyz/items/get',
-            users: 'https://inventories.jailbreakchangelogs.xyz/proxy/users',
-            dupes: 'https://inventories.jailbreakchangelogs.xyz/users/dupes',
-        },
+        // Your Cloudflare Worker proxy (runs on your domain - no CORS!)
+        API_BASE: '/api',
         
         DEBOUNCE: 300,
         RATE_LIMIT: 500,
@@ -40,6 +26,7 @@
         lastApiCall: 0,
         searchCache: new Map(),
         favorites: JSON.parse(localStorage.getItem('jbcl_favorites') || '[]'),
+        theme: localStorage.getItem('jbcl_theme') || 'dark',
     };
 
     // ========================================
@@ -84,52 +71,35 @@
     }
 
     // ========================================
-    // API - CORS-Free Fetch
-    // Using multiple fallback strategies
+    // API - Using your local proxy
     // ========================================
-    async function fetchWithProxy(url) {
-        const strategies = [
-            // Strategy 1: Direct (if CORS works)
-            async () => {
-                const res = await fetch(url, { 
-                    mode: 'cors',
-                    credentials: 'omit',
-                });
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                return res.json();
-            },
-            
-            // Strategy 2: AllOrigins proxy
-            async () => {
-                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-                const res = await fetch(proxyUrl);
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const text = await res.text();
-                return JSON.parse(text);
-            },
-            
-            // Strategy 3: CORSproxy.io
-            async () => {
-                const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`;
-                const res = await fetch(proxyUrl);
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                return res.json();
-            },
-        ];
-        
-        let lastError = null;
-        for (const strategy of strategies) {
-            try {
-                const data = await strategy();
-                return data;
-            } catch (e) {
-                lastError = e;
-                console.log('Strategy failed:', e.message);
-            }
+    async function api(endpoint, options = {}) {
+        const now = Date.now();
+        if (now - state.lastApiCall < CONFIG.RATE_LIMIT) {
+            await sleep(CONFIG.RATE_LIMIT - (now - state.lastApiCall));
         }
+        state.lastApiCall = Date.now();
+
+        const url = `${CONFIG.API_BASE}${endpoint}`;
         
-        console.error('All strategies failed for:', url, lastError);
-        return null;
+        try {
+            const res = await fetch(url, {
+                ...options,
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...options.headers,
+                },
+            });
+            
+            if (!res.ok) {
+                throw new Error(`HTTP ${res.status}`);
+            }
+            
+            return await res.json();
+        } catch (err) {
+            console.error('API error:', err);
+            return null;
+        }
     }
 
     async function searchItems(query) {
@@ -140,15 +110,8 @@
             return state.searchCache.get(cacheKey);
         }
         
-        // Rate limit
-        const now = Date.now();
-        if (now - state.lastApiCall < CONFIG.RATE_LIMIT) {
-            await sleep(CONFIG.RATE_LIMIT - (now - state.lastApiCall));
-        }
-        state.lastApiCall = Date.now();
-        
-        const url = `${CONFIG.API_ENDPOINTS.items}?name=${encodeURIComponent(query)}`;
-        const data = await fetchWithProxy(url);
+        // Use local proxy - no CORS!
+        const data = await api(`/items?name=${encodeURIComponent(query)}`);
         
         if (data && data.length) {
             state.searchCache.set(cacheKey, data);
@@ -160,42 +123,24 @@
     async function getUserId(username) {
         if (/^\d+$/.test(username)) return username;
         
-        // Use POST with proxy
-        try {
-            const url = CONFIG.API_ENDPOINTS.users;
-            const res = await fetchWithProxy(url);
-            
-            // Since POST via proxy is complex, try direct with fallback
-            const directRes = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ usernames: [username], excludeBannedUser: true }),
-                mode: 'cors',
-            });
-            
-            if (!directRes.ok) return null;
-            
-            const data = await directRes.json();
-            return data.data?.[0]?.id?.toString();
-        } catch {
-            // Try user lookup via inventory API's user endpoint if available
-            return username; // Return username as fallback - let dupes endpoint handle it
-        }
+        const data = await api('/users', {
+            method: 'POST',
+            body: JSON.stringify({ usernames: [username] }),
+        });
+        
+        return data?.data?.[0]?.id?.toString() || null;
     }
 
     async function checkDupes(userId) {
-        try {
-            // Try direct first (most reliable)
-            const url = `${CONFIG.API_ENDPOINTS.dupes}?id=${userId}`;
-            const res = await fetch(url, { mode: 'cors' });
-            
-            if (res.status === 404) return [];
-            if (!res.ok) return null;
-            
-            return await res.json();
-        } catch {
-            return null;
-        }
+        const data = await api(`/dupes?id=${userId}`);
+        
+        if (data === null) return null;
+        if (data?.data === undefined) return [];
+        return data.data || [];
+    }
+
+    async function getInventory(userId) {
+        return await api(`/inventory?id=${userId}`);
     }
 
     // ========================================
@@ -217,11 +162,9 @@
         container.innerHTML = items.map((item, i) => {
             const cash = parseValue(item.cash_value);
             const duped = parseValue(item.duped_value);
-            const trend = item.trend?.toLowerCase() || '';
-            const demand = item.demand?.toLowerCase() || '';
             
             return `
-                <div class="item-card" data-index="${i}" data-item='${JSON.stringify(item)}'>
+                <div class="item-card" data-index="${i}">
                     <div class="item-card-header">
                         <span class="item-card-name">${item.name || 'Unknown'}</span>
                         <span class="item-card-type">${item.type || 'Unknown'}</span>
@@ -237,12 +180,8 @@
                         </div>
                     </div>
                     <div class="item-card-meta">
-                        <span class="demand-${demand.includes('high') ? 'high' : demand.includes('medium') ? 'medium' : 'low'}">
-                            ${item.demand || 'N/A'}
-                        </span>
-                        <span class="trend-${trend.includes('up') ? 'up' : trend.includes('down') ? 'down' : 'stable'}">
-                            ${item.trend || 'N/A'}
-                        </span>
+                        <span>${item.demand || 'N/A'}</span>
+                        <span>${item.trend || 'N/A'}</span>
                     </div>
                 </div>
             `;
@@ -260,7 +199,6 @@
                 type: item.type,
                 duped: false,
                 value: parseValue(item.cash_value) || parseValue(item.duped_value) || 0,
-                raw: item,
             });
         });
         renderTradeItems();
@@ -278,7 +216,7 @@
         const render = (items, containerId) => {
             const container = document.getElementById(containerId);
             if (!items.length) {
-                container.innerHTML = '<div class="empty-state" style="padding:24px"><p style="color:var(--text-muted)">No items added</p></div>';
+                container.innerHTML = '<div class="empty-state" style="padding:24px"><p style="color:var(--text-muted)">No items</p></div>';
                 return;
             }
             
@@ -348,92 +286,65 @@
     // ========================================
     function renderDupeResults(dupes, username) {
         const container = document.getElementById('dupe-results');
-        
-        if (!dupes || !dupes.length) {
-            container.innerHTML = `
-                <div class="dupe-header">
-                    <h3>${username}</h3>
-                    <span class="clean-badge">✓ Clean</span>
-                </div>
-                <p style="color:var(--text-secondary)">No dupe items found. This player appears to be clean.</p>
-            `;
-            return;
-        }
+        const isEmpty = !dupes || dupes.length === 0;
         
         container.innerHTML = `
             <div class="dupe-header">
                 <h3>${username}</h3>
-                <span class="dupe-badge">⚠ ${dupes.length} Duped</span>
+                ${isEmpty 
+                    ? '<span class="clean-badge">✓ Clean</span>' 
+                    : `<span class="dupe-badge">⚠ ${dupes.length} Duped</span>`}
             </div>
-            <div class="dupe-list">
-                ${dupes.map(d => `
-                    <div class="dupe-list-item">
-                        <div>
-                            <h4>${d.title || 'Unknown'}</h4>
-                            <span class="meta">Trades: ${d.timesTraded || 0}</span>
+            ${isEmpty 
+                ? '<p style="color:var(--text-secondary)">No duplicate items found.</p>'
+                : `<div class="dupe-list">
+                    ${dupes.map(d => `
+                        <div class="dupe-list-item">
+                            <div>
+                                <h4>${d.title || 'Unknown Item'}</h4>
+                                <span class="meta">Trades: ${d.timesTraded || 0}</span>
+                            </div>
+                            <span class="ratio">${d.dupe_ratio || 'N/A'}</span>
                         </div>
-                        <span class="ratio">${d.dupe_ratio || 'N/A'}</span>
-                    </div>
-                `).join('')}
-            </div>
+                    `).join('')}
+                </div>`}
         `;
     }
 
     // ========================================
     // Inventory Results
     // ========================================
-    function renderInvResults(userId, username) {
+    function renderInvResults(data, username, userId) {
         const container = document.getElementById('inv-results');
+        
+        if (!data?.data?.length) {
+            container.innerHTML = `
+                <div class="dupe-header">
+                    <h3>${username}</h3>
+                    <span>ID: ${userId}</span>
+                </div>
+                <p style="color:var(--text-secondary)">No inventory data available.</p>
+            `;
+            return;
+        }
+        
+        const items = data.data.slice(0, 20);
         
         container.innerHTML = `
             <div class="dupe-header">
                 <h3>${username}</h3>
                 <span>ID: ${userId}</span>
             </div>
-            <p style="color:var(--text-secondary)">Detailed inventory feature coming soon. Use Dupe Check to verify trading history.</p>
-        `;
-    }
-
-    // ========================================
-    // Favorites
-    // ========================================
-    function saveFavorites() {
-        localStorage.setItem('jbcl_favorites', JSON.stringify(state.favorites));
-    }
-
-    function renderFavorites() {
-        const container = document.getElementById('favorites-list');
-        
-        if (!state.favorites.length) {
-            container.innerHTML = `
-                <div class="empty-state">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                    </svg>
-                    <p>No favorites yet</p>
-                </div>
-            `;
-            return;
-        }
-        
-        container.innerHTML = state.favorites.map((item, i) => `
-            <div class="item-card" data-index="${i}">
-                <div class="item-card-header">
-                    <span class="item-card-name">${item.name}</span>
-                    <span class="item-card-type">${item.type}</span>
-                </div>
-                <div class="item-card-values">
-                    <div class="cash">
-                        <span class="label">Cash</span>
-                        <span class="value">${formatValue(parseValue(item.cash_value))}</span>
+            <div class="inv-list">
+                ${items.map(item => `
+                    <div class="inv-item">
+                        <span class="inv-name">${item.name || 'Unknown'}</span>
+                        <span class="inv-type">${item.type || ''}</span>
                     </div>
-                    <div class="duped">
-                        <span class="label">Duped</span>
-                        <span class="value">${formatValue(parseValue(item.duped_value))}</span>
-                    </div>
-                </div>
+                `).join('')}
             </div>
-        `).join('');
+            ${data.data.length > 20 ? `<p style="color:var(--text-muted);margin-top:8px">+ ${data.data.length - 20} more items</p>` : ''}
+        `;
     }
 
     // ========================================
@@ -459,23 +370,31 @@
     // Theme
     // ========================================
     function initTheme() {
-        const saved = localStorage.getItem('jbcl_theme') || 'dark';
-        document.documentElement.dataset.theme = saved;
+        document.documentElement.dataset.theme = state.theme;
         
         document.getElementById('theme-toggle').addEventListener('click', () => {
-            const current = document.documentElement.dataset.theme;
-            const next = current === 'dark' ? 'light' : 'dark';
-            document.documentElement.dataset.theme = next;
-            localStorage.setItem('jbcl_theme', next);
+            state.theme = state.theme === 'dark' ? 'light' : 'dark';
+            document.documentElement.dataset.theme = state.theme;
+            localStorage.setItem('jbcl_theme', state.theme);
         });
     }
 
     // ========================================
     // Initialize
     // ========================================
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
         initNavigation();
         initTheme();
+        
+        // Check API health
+        try {
+            const health = await fetch('/api/health');
+            if (!health.ok) {
+                console.warn('API proxy not responding');
+            }
+        } catch (e) {
+            console.warn('API proxy not available');
+        }
         
         // Item search
         const itemSearch = document.getElementById('item-search');
@@ -505,6 +424,9 @@
             if (items?.length) {
                 addToTrade(items, side);
                 input.value = '';
+                showToast(`Added ${items[0].name}`, 'success');
+            } else {
+                showToast('Item not found', 'error');
             }
         };
         
@@ -557,13 +479,11 @@
                 return;
             }
             
-            renderInvResults(userId, username);
+            const data = await getInventory(userId);
+            renderInvResults(data, username, userId);
         };
         
         invSearch.addEventListener('keypress', e => e.key === 'Enter' && doInvCheck());
         invBtn.addEventListener('click', doInvCheck);
-        
-        // Render initial favorites
-        renderFavorites();
     });
 })();
