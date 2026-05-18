@@ -1,18 +1,16 @@
 /**
- * JBCL Web Interface - Uses local proxy on ches.dev
- * Clean API integration via your Cloudflare Worker
+ * JBCL - Premium Trading Interface JS
+ * Uses your Cloudflare Worker API
  */
 
 (function() {
     'use strict';
 
     // ========================================
-    // Configuration
+    // Configuration - Your Worker URL
     // ========================================
     const CONFIG = {
-        // Your Cloudflare Worker proxy (runs on your domain - no CORS!)
-        API_BASE: '/api',
-        
+        API_BASE: 'https://jbcl-api.cheslin23t.workers.dev',
         DEBOUNCE: 300,
         RATE_LIMIT: 500,
     };
@@ -27,23 +25,12 @@
         searchCache: new Map(),
         favorites: JSON.parse(localStorage.getItem('jbcl_favorites') || '[]'),
         theme: localStorage.getItem('jbcl_theme') || 'dark',
+        apiConnected: false,
     };
 
     // ========================================
     // Utilities
     // ========================================
-    function debounce(fn, ms) {
-        let timer;
-        return (...args) => {
-            clearTimeout(timer);
-            timer = setTimeout(() => fn(...args), ms);
-        };
-    }
-
-    async function sleep(ms) {
-        return new Promise(r => setTimeout(r, ms));
-    }
-
     function parseValue(v) {
         if (!v || v === 'N/A') return null;
         v = v.toString().toLowerCase().replace(/[,]/g, '').trim();
@@ -70,8 +57,12 @@
         setTimeout(() => toast.remove(), 3000);
     }
 
+    async function sleep(ms) {
+        return new Promise(r => setTimeout(r, ms));
+    }
+
     // ========================================
-    // API - Using your local proxy
+    // API - Using Your Cloudflare Worker
     // ========================================
     async function api(endpoint, options = {}) {
         const now = Date.now();
@@ -98,6 +89,8 @@
             return await res.json();
         } catch (err) {
             console.error('API error:', err);
+            state.apiConnected = false;
+            updateApiStatus();
             return null;
         }
     }
@@ -110,7 +103,6 @@
             return state.searchCache.get(cacheKey);
         }
         
-        // Use local proxy - no CORS!
         const data = await api(`/items?name=${encodeURIComponent(query)}`);
         
         if (data && data.length) {
@@ -143,17 +135,37 @@
         return await api(`/inventory?id=${userId}`);
     }
 
+    function updateApiStatus() {
+        const statusDot = document.querySelector('.status-dot');
+        const statusText = document.querySelector('.api-status span');
+        
+        if (statusDot && statusText) {
+            if (state.apiConnected) {
+                statusDot.style.background = '#22c55e';
+                statusText.textContent = 'API Connected';
+            } else {
+                statusDot.style.background = '#ef4444';
+                statusText.textContent = 'API Disconnected';
+            }
+        }
+    }
+
     // ========================================
-    // UI - Item Results
+    // UI - Results
     // ========================================
     function renderItems(items, container) {
         if (!items?.length) {
             container.innerHTML = `
                 <div class="empty-state">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-                    </svg>
-                    <p>No items found</p>
+                    <div class="empty-icon">
+                        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="28" cy="28" r="20"/>
+                            <path d="m48 48-13.5-13.5"/>
+                            <circle cx="28" cy="28" r="6"/>
+                        </svg>
+                    </div>
+                    <h3>No items found</h3>
+                    <p>Try a different search term</p>
                 </div>
             `;
             return;
@@ -193,7 +205,7 @@
     // ========================================
     function addToTrade(items, side) {
         const list = side === 'your' ? state.yourItems : state.theirItems;
-        items.forEach(item => {
+        items.slice(0, 1).forEach(item => {
             list.push({
                 name: item.name,
                 type: item.type,
@@ -213,21 +225,23 @@
     }
 
     function renderTradeItems() {
-        const render = (items, containerId) => {
+        const render = (items, containerId, side) => {
             const container = document.getElementById(containerId);
             if (!items.length) {
-                container.innerHTML = '<div class="empty-state" style="padding:24px"><p style="color:var(--text-muted)">No items</p></div>';
+                container.innerHTML = '<div class="empty-panel">Add items to calculate</div>';
                 return;
             }
             
             container.innerHTML = items.map((item, i) => `
                 <div class="calc-item">
-                    <div class="calc-item-info">
+                    <div>
                         <span class="calc-item-name">${item.name}</span>
-                        <span class="calc-item-status ${item.duped ? 'duped' : 'clean'}">${item.duped ? 'Duped' : 'Clean'}</span>
+                        <span class="calc-item-status ${item.duped ? 'duped' : 'clean'}">${item.duped ? 'D' : 'C'}</span>
                     </div>
-                    <span class="calc-item-value">${formatValue(item.value)}</span>
-                    <button class="calc-item-remove" data-side="${containerId === 'your-items' ? 'your' : 'their'}" data-index="${i}">×</button>
+                    <div style="display:flex;align-items:center">
+                        <span class="calc-item-value">${formatValue(item.value)}</span>
+                        <button class="calc-item-remove" data-side="${side}" data-index="${i}">×</button>
+                    </div>
                 </div>
             `).join('');
             
@@ -238,8 +252,8 @@
             });
         };
         
-        render(state.yourItems, 'your-items');
-        render(state.theirItems, 'their-items');
+        render(state.yourItems, 'your-items', 'your');
+        render(state.theirItems, 'their-items', 'their');
         
         const yourTotal = state.yourItems.reduce((s, i) => s + i.value, 0);
         const theirTotal = state.theirItems.reduce((s, i) => s + i.value, 0);
@@ -253,25 +267,36 @@
         const theirTotal = state.theirItems.reduce((s, i) => s + i.value, 0);
         
         let percent = 0;
-        let text = '—';
+        let text = 'Add items to analyze';
         
         if (yourTotal > 0 && theirTotal > 0) {
             const ratio = yourTotal / theirTotal;
             
             if (ratio >= 0.95 && ratio <= 1.05) {
                 percent = 100;
-                text = 'Fair';
+                text = '✓ Fair Trade';
             } else if (ratio >= 0.85 && ratio <= 1.15) {
                 percent = 70;
-                text = 'Slight imbalance';
+                text = '~ Slight Imbalance';
+            } else if (ratio > 1) {
+                percent = Math.max(10, 100 - (ratio - 1) * 50);
+                text = '↑ You Overpay';
             } else {
-                percent = 30;
-                text = 'Uneven';
+                percent = Math.max(10, 100 - (1 - ratio) * 50);
+                text = '↓ You Underpay';
             }
         }
         
-        document.getElementById('fairness-fill').style.width = percent + '%';
-        document.getElementById('fairness-text').textContent = text;
+        const fill = document.getElementById('fairness-fill');
+        if (fill) {
+            fill.style.width = percent + '%';
+            if (percent >= 70) fill.style.background = '#22c55e';
+            else if (percent >= 40) fill.style.background = '#eab308';
+            else fill.style.background = '#ef4444';
+        }
+        
+        const textEl = document.getElementById('fairness-text');
+        if (textEl) textEl.textContent = text;
     }
 
     function clearTrade() {
@@ -279,6 +304,7 @@
         state.theirItems = [];
         renderTradeItems();
         updateFairness();
+        showToast('Trade cleared', 'info');
     }
 
     // ========================================
@@ -388,13 +414,14 @@
         
         // Check API health
         try {
-            const health = await fetch('/api/health');
-            if (!health.ok) {
-                console.warn('API proxy not responding');
+            const health = await fetch(CONFIG.API_BASE + '/health');
+            if (health.ok) {
+                state.apiConnected = true;
             }
         } catch (e) {
-            console.warn('API proxy not available');
+            state.apiConnected = false;
         }
+        updateApiStatus();
         
         // Item search
         const itemSearch = document.getElementById('item-search');
@@ -451,7 +478,7 @@
             
             const userId = await getUserId(username);
             if (!userId) {
-                results.innerHTML = '<div class="empty-state"><p>User not found</p></div>';
+                results.innerHTML = '<div class="empty-state"><h3>User not found</h3><p>Check the username and try again</p></div>';
                 return;
             }
             
@@ -475,7 +502,7 @@
             
             const userId = await getUserId(username);
             if (!userId) {
-                results.innerHTML = '<div class="empty-state"><p>User not found</p></div>';
+                results.innerHTML = '<div class="empty-state"><h3>User not found</h3><p>Check the username and try again</p></div>';
                 return;
             }
             

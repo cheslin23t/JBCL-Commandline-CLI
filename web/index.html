@@ -3,44 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JBCL | Jailbreak Trading</title>
+    <title>JBCL | Premium Jailbreak Trading</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◆</text></svg>">
 </head>
 <body>
+    <!-- Animated Background -->
+    <div class="bg">
+        <div class="bg-gradient"></div>
+        <div class="bg-grid"></div>
+        <div class="bg-glow"></div>
+        <div class="bg-noise"></div>
+    </div>
+
     <div class="app">
         <!-- Sidebar -->
         <aside class="sidebar">
-            <div class="logo">
-                <span class="logo-mark">◈</span>
-                <span class="logo-text">JBCL</span>
+            <div class="sidebar-top">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 32 32" fill="none">
+                            <path d="M16 2L28 9V23L16 30L4 23V9L16 2Z" stroke="url(#logoGrad)" stroke-width="2" fill="none"/>
+                            <path d="M16 2V16M16 16L28 9M16 16L4 9M16 16V30" stroke="url(#logoGrad)" stroke-width="1.5"/>
+                            <defs>
+                                <linearGradient id="logoGrad" x1="4" y1="4" x2="28" y2="28">
+                                    <stop offset="0%" stop-color="#6366f1"/>
+                                    <stop offset="100%" stop-color="#a855f7"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <div class="logo-text">
+                        <span class="name">JBCL</span>
+                        <span class="tag">Trading Hub</span>
+                    </div>
+                </div>
             </div>
+
             <nav class="nav">
+                <div class="nav-label">Menu</div>
                 <button class="nav-item active" data-view="lookup">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    <div class="nav-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                        </svg>
+                    </div>
                     <span>Item Lookup</span>
                 </button>
                 <button class="nav-item" data-view="calculator">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h8M8 14h5M8 18h5"/></svg>
+                    <div class="nav-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h8M8 14h5M8 18h5"/>
+                        </svg>
+                    </div>
                     <span>Trade Calc</span>
                 </button>
                 <button class="nav-item" data-view="dupe">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+                    <div class="nav-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                            <path d="M12 9v4M12 17h.01"/>
+                        </svg>
+                    </div>
                     <span>Dupe Check</span>
                 </button>
                 <button class="nav-item" data-view="inventory">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"/></svg>
+                    <div class="nav-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        </svg>
+                    </div>
                     <span>Inventory</span>
                 </button>
                 <button class="nav-item" data-view="favorites">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    <div class="nav-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                    </div>
                     <span>Favorites</span>
                 </button>
+
+                <div class="nav-divider"></div>
+
+                <div class="nav-label">Tools</div>
+                <button class="nav-item" data-view="market">
+                    <div class="nav-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 3v18h18"/><path d="M18 9l-5 5-4-4-3 3"/>
+                        </svg>
+                    </div>
+                    <span>Market</span>
+                </button>
+                <button class="nav-item" data-view="history">
+                    <div class="nav-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                    </div>
+                    <span>History</span>
+                </button>
             </nav>
-            <div class="sidebar-footer">
-                <span class="version">v1.0.0</span>
+
+            <div class="sidebar-bottom">
+                <div class="api-status">
+                    <div class="status-dot"></div>
+                    <span>API Connected</span>
+                </div>
             </div>
         </aside>
 
@@ -48,127 +120,265 @@
         <main class="main">
             <!-- Header -->
             <header class="header">
-                <div class="search-wrapper">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                    <input type="text" id="global-search" placeholder="Search items, users..." autocomplete="off">
+                <div class="header-left">
+                    <div class="search-container">
+                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        <input type="text" id="global-search" placeholder="Search items, users, anything..." autocomplete="off">
+                        <kbd>⌘K</kbd>
+                    </div>
                 </div>
-                <div class="header-actions">
-                    <button class="theme-toggle" id="theme-toggle">
-                        <svg class="sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-                        <svg class="moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                <div class="header-right">
+                    <button class="header-btn" id="theme-toggle" title="Toggle theme">
+                        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                        </svg>
+                        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                        </svg>
                     </button>
+                    <a href="https://github.com/cheslin23t/JBCL-Commandline-CLI" target="_blank" class="header-btn" title="GitHub">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.44 9.81 8.21 11.41.6.11.82-.26.82-.58v-2.03c-3.34.73-4.03-1.61-4.03-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.09-.75.08-.73.08-.73 1.21.08 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.94 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.11-3.18 0 0 1.01-.32 3.3 1.23A11.5 11.5 0 0 1 12 6.83c1.02 0 2.04.1 3.02.3 2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.93.43.37.81 1.1.81 2.22v3.29c0 .32.21.69.82.58C20.56 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/>
+                        </svg>
+                    </a>
+                    <div class="user-avatar">
+                        <span>JB</span>
+                    </div>
                 </div>
             </header>
 
-            <!-- Views -->
-            <div class="views">
-                <!-- Item Lookup -->
+            <!-- Content -->
+            <div class="content">
+                <!-- Lookup View -->
                 <section class="view active" id="lookup-view">
-                    <div class="view-header">
-                        <h1>Item Lookup</h1>
-                        <p>Search for any tradable item in Jailbreak</p>
+                    <div class="view-hero">
+                        <div class="hero-content">
+                            <h1>Item Lookup</h1>
+                            <p>Search any tradable item in Jailbreak</p>
+                        </div>
                     </div>
-                    <div class="search-bar">
-                        <input type="text" id="item-search" placeholder="Enter item name (e.g., Phantom, Carbonara, Veneno)...">
-                        <button id="search-btn">Search</button>
+                    
+                    <div class="search-panel">
+                        <div class="search-box">
+                            <input type="text" id="item-search" placeholder="Search items (e.g., Phantom, Carbonara, Veneno, Torpedo)...">
+                            <button class="search-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                                </svg>
+                                <span>Search</span>
+                            </button>
+                        </div>
                     </div>
+
                     <div class="results" id="item-results">
                         <div class="empty-state">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                            <p>Search for items to see results</p>
+                            <div class="empty-icon">
+                                <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <circle cx="28" cy="28" r="20"/>
+                                    <path d="m48 48-13.5-13.5"/>
+                                    <circle cx="28" cy="28" r="6"/>
+                                </svg>
+                            </div>
+                            <h3>Search for items</h3>
+                            <p>Start typing to find any Jailbreak item</p>
                         </div>
                     </div>
                 </section>
 
-                <!-- Trade Calculator -->
+                <!-- Calculator View -->
                 <section class="view" id="calculator-view">
-                    <div class="view-header">
-                        <h1>Trade Calculator</h1>
-                        <p>Compare trade values between two sides</p>
-                    </div>
-                    <div class="calc-grid">
-                        <div class="calc-panel">
-                            <div class="panel-header">
-                                <h3>Your Items</h3>
-                                <span class="panel-total" id="your-total">0</span>
-                            </div>
-                            <div class="panel-items" id="your-items"></div>
-                            <div class="panel-add">
-                                <input type="text" id="your-search" placeholder="Add item...">
-                                <button class="add-btn">+</button>
-                            </div>
-                        </div>
-                        <div class="calc-divider">
-                            <span>vs</span>
-                        </div>
-                        <div class="calc-panel">
-                            <div class="panel-header">
-                                <h3>Their Items</h3>
-                                <span class="panel-total" id="their-total">0</span>
-                            </div>
-                            <div class="panel-items" id="their-items"></div>
-                            <div class="panel-add">
-                                <input type="text" id="their-search" placeholder="Add item...">
-                                <button class="add-btn">+</button>
-                            </div>
+                    <div class="view-hero">
+                        <div class="hero-content">
+                            <h1>Trade Calculator</h1>
+                            <p>Compare trade values with real-time analysis</p>
                         </div>
                     </div>
-                    <div class="calc-summary">
-                        <div class="summary-fairness">
-                            <span class="label">Trade Fairness</span>
-                            <div class="fairness-bar"><div class="fairness-fill" id="fairness-fill"></div></div>
-                            <span id="fairness-text">—</span>
+
+                    <div class="calc-container">
+                        <div class="calc-panels">
+                            <div class="calc-panel">
+                                <div class="panel-header">
+                                    <div class="panel-title">
+                                        <div class="panel-icon your">Y</div>
+                                        <h3>Your Items</h3>
+                                    </div>
+                                    <div class="panel-total" id="your-total">0</div>
+                                </div>
+                                <div class="panel-items" id="your-items">
+                                    <div class="empty-panel">Add items to calculate</div>
+                                </div>
+                                <div class="panel-add">
+                                    <input type="text" id="your-search" placeholder="Add item...">
+                                    <button class="add-btn">+</button>
+                                </div>
+                            </div>
+
+                            <div class="calc-vs">
+                                <div class="vs-circle">VS</div>
+                            </div>
+
+                            <div class="calc-panel">
+                                <div class="panel-header">
+                                    <div class="panel-title">
+                                        <div class="panel-icon their">T</div>
+                                        <h3>Their Items</h3>
+                                    </div>
+                                    <div class="panel-total" id="their-total">0</div>
+                                </div>
+                                <div class="panel-items" id="their-items">
+                                    <div class="empty-panel">Add items to calculate</div>
+                                </div>
+                                <div class="panel-add">
+                                    <input type="text" id="their-search" placeholder="Add item...">
+                                    <button class="add-btn">+</button>
+                                </div>
+                            </div>
                         </div>
-                        <button class="clear-btn" id="clear-trade">Clear All</button>
+
+                        <div class="calc-analysis">
+                            <div class="analysis-card">
+                                <div class="analysis-label">Trade Fairness</div>
+                                <div class="analysis-bar">
+                                    <div class="analysis-fill" id="fairness-fill"></div>
+                                </div>
+                                <div class="analysis-value" id="fairness-text">Add items to analyze</div>
+                            </div>
+                            <button class="clear-btn" id="clear-trade">Clear All</button>
+                        </div>
                     </div>
                 </section>
 
-                <!-- Dupe Check -->
+                <!-- Dupe View -->
                 <section class="view" id="dupe-view">
-                    <div class="view-header">
-                        <h1>Dupe Check</h1>
-                        <p>Check if a player has duplicate items</p>
+                    <div class="view-hero">
+                        <div class="hero-content">
+                            <h1>Dupe Check</h1>
+                            <p>Check if a player has duplicate items</p>
+                        </div>
                     </div>
-                    <div class="search-bar compact">
-                        <input type="text" id="dupe-search" placeholder="Enter username or user ID...">
-                        <button id="dupe-btn">Check</button>
+
+                    <div class="search-panel compact">
+                        <div class="search-box">
+                            <input type="text" id="dupe-search" placeholder="Enter username or user ID...">
+                            <button class="search-btn" id="dupe-btn">Check</button>
+                        </div>
                     </div>
+
                     <div class="dupe-results" id="dupe-results">
                         <div class="empty-state">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-                            <p>Enter a username to check for duplicate items</p>
+                            <div class="empty-icon">
+                                <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M28 6L6 28l7 25a4 4 0 0 0 3.78 3.78L52 52l14-14"/>
+                                    <circle cx="28" cy="28" r="12"/>
+                                </svg>
+                            </div>
+                            <h3>Check a player</h3>
+                            <p>Enter a username to check for duplicated items</p>
                         </div>
                     </div>
                 </section>
 
-                <!-- Inventory -->
+                <!-- Inventory View -->
                 <section class="view" id="inventory-view">
-                    <div class="view-header">
-                        <h1>Inventory</h1>
-                        <p>View a player's inventory</p>
+                    <div class="view-hero">
+                        <div class="hero-content">
+                            <h1>Inventory</h1>
+                            <p>View a player's complete inventory</p>
+                        </div>
                     </div>
-                    <div class="search-bar compact">
-                        <input type="text" id="inv-search" placeholder="Enter username or user ID...">
-                        <button id="inv-btn">Lookup</button>
+
+                    <div class="search-panel compact">
+                        <div class="search-box">
+                            <input type="text" id="inv-search" placeholder="Enter username or user ID...">
+                            <button class="search-btn" id="inv-btn">Lookup</button>
+                        </div>
                     </div>
+
                     <div class="inv-results" id="inv-results">
                         <div class="empty-state">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            <p>Enter a username to view their inventory</p>
+                            <div class="empty-icon">
+                                <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <rect x="10" y="14" width="44" height="40" rx="4"/>
+                                    <path d="M10 24h44"/>
+                                    <circle cx="22" cy="18" r="3"/>
+                                    <circle cx="32" cy="18" r="3"/>
+                                    <circle cx="42" cy="18" r="3"/>
+                                </svg>
+                            </div>
+                            <h3>View inventory</h3>
+                            <p>Enter a username to view their items</p>
                         </div>
                     </div>
                 </section>
 
-                <!-- Favorites -->
+                <!-- Favorites View -->
                 <section class="view" id="favorites-view">
-                    <div class="view-header">
-                        <h1>Favorites</h1>
-                        <p>Your saved items for quick access</p>
+                    <div class="view-hero">
+                        <div class="hero-content">
+                            <h1>Favorites</h1>
+                            <p>Your saved items for quick reference</p>
+                        </div>
                     </div>
+
                     <div class="favorites-list" id="favorites-list">
                         <div class="empty-state">
-                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                            <p>No favorites yet. Click the star on any item to save it.</p>
+                            <div class="empty-icon">
+                                <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M32 8l4.8 9.7 10.7 1.6-7.75 7.55 1.83 10.65L32 33.15l-9.58 5.4 1.83-10.65-7.75-7.55 10.7-1.6L32 8z"/>
+                                </svg>
+                            </div>
+                            <h3>No favorites yet</h3>
+                            <p>Star items to save them here</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Market View -->
+                <section class="view" id="market-view">
+                    <div class="view-hero">
+                        <div class="hero-content">
+                            <h1>Market Overview</h1>
+                            <p>Live market trends and analytics</p>
+                        </div>
+                    </div>
+
+                    <div class="market-stats">
+                        <div class="stat-card">
+                            <div class="stat-value">32K+</div>
+                            <div class="stat-label">Items Tracked</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">Live</div>
+                            <div class="stat-label">Price Updates</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">Official</div>
+                            <div class="stat-label">Badimo Data</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- History View -->
+                <section class="view" id="history-view">
+                    <div class="view-hero">
+                        <div class="hero-content">
+                            <h1>Trade History</h1>
+                            <p>Your recent trading activity</p>
+                        </div>
+                    </div>
+
+                    <div class="history-empty">
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <rect x="10" y="10" width="44" height="44" rx="4"/>
+                                    <path d="M20 24h24M20 32h24M20 40h16"/>
+                                </svg>
+                            </div>
+                            <h3>No history yet</h3>
+                            <p>Your trade calculations will appear here</p>
                         </div>
                     </div>
                 </section>
@@ -176,7 +386,7 @@
         </main>
     </div>
 
-    <!-- Toast Container -->
+    <!-- Toasts -->
     <div class="toasts" id="toasts"></div>
 
     <script src="js/app.js"></script>
