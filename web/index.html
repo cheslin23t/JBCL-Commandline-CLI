@@ -3,342 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JB-X | Jailbreak Trading Hub</title>
+    <title>JBCL | Jailbreak Trading</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
-    <link rel="manifest" href="manifest.json">
-    <meta name="description" content="JBCL Web Interface - Advanced trading tools for Roblox Jailbreak. Look up item values, detect dupes, calculate trades, and more.">
-    <meta name="theme-color" content="#0f0f23">
 </head>
 <body>
-    <div class="app-container">
-        <!-- Header -->
-        <header class="header">
-            <div class="logo-section">
-                <div class="logo">
-                    <span class="logo-icon">◆</span>
-                    <span class="logo-text">JB-X</span>
-                </div>
-                <span class="logo-subtitle">Jailbreak Trading Hub</span>
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="logo-mark">◈</span>
+                <span class="logo-text">JBCL</span>
             </div>
-            <nav class="nav-tabs">
-                <button class="nav-tab active" data-tab="lookup">
-                    <span class="tab-icon">🔍</span>
+            <nav class="nav">
+                <button class="nav-item active" data-view="lookup">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                     <span>Item Lookup</span>
                 </button>
-                <button class="nav-tab" data-tab="calculator">
-                    <span class="tab-icon">🧮</span>
+                <button class="nav-item" data-view="calculator">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h8M8 14h5M8 18h5"/></svg>
                     <span>Trade Calc</span>
                 </button>
-                <button class="nav-tab" data-tab="dupe">
-                    <span class="tab-icon">⚠️</span>
+                <button class="nav-item" data-view="dupe">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
                     <span>Dupe Check</span>
                 </button>
-                <button class="nav-tab" data-tab="inventory">
-                    <span class="tab-icon">📦</span>
+                <button class="nav-item" data-view="inventory">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"/></svg>
                     <span>Inventory</span>
                 </button>
-                <button class="nav-tab" data-tab="trends">
-                    <span class="tab-icon">📈</span>
-                    <span>Trends</span>
-                </button>
-                <button class="nav-tab" data-tab="compare">
-                    <span class="tab-icon">⚖️</span>
-                    <span>Compare</span>
+                <button class="nav-item" data-view="favorites">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    <span>Favorites</span>
                 </button>
             </nav>
-            <div class="header-actions">
-                <button class="btn-icon" id="theme-toggle" title="Toggle Theme">🌙</button>
-                <a href="https://github.com/cheslin23t/JBCL-Commandline-CLI" target="_blank" class="btn-icon" title="View on GitHub">⭐</a>
+            <div class="sidebar-footer">
+                <span class="version">v1.0.0</span>
             </div>
-        </header>
+        </aside>
 
         <!-- Main Content -->
-        <main class="main-content">
-            <!-- Item Lookup Section -->
-            <section class="tab-content active" id="lookup-section">
-                <div class="section-header">
-                    <h2>🔍 Item Value Lookup</h2>
-                    <p>Search for any tradable item in Roblox Jailbreak</p>
+        <main class="main">
+            <!-- Header -->
+            <header class="header">
+                <div class="search-wrapper">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    <input type="text" id="global-search" placeholder="Search items, users..." autocomplete="off">
                 </div>
-                <div class="search-box">
-                    <div class="search-input-wrapper">
-                        <input type="text" id="item-search" placeholder="Enter item name (e.g., Phantom, Carbonara, Veneno)..." autocomplete="off">
-                        <button class="btn-search" id="search-btn">
-                            <span>Search</span>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="11" cy="11" r="8"></circle>
-                                <path d="M21 21l-4.35-4.35"></path>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="search-tips">
-                        <span class="tip">💡 Tip: Click a result to add it to trade calculator</span>
-                    </div>
+                <div class="header-actions">
+                    <button class="theme-toggle" id="theme-toggle">
+                        <svg class="sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+                        <svg class="moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                    </button>
                 </div>
-                <div class="results-grid" id="item-results">
-                    <!-- Results will be populated here -->
-                </div>
-                <div class="loading-indicator" id="search-loading">
-                    <div class="spinner"></div>
-                    <span>Searching...</span>
-                </div>
-            </section>
+            </header>
 
-            <!-- Trade Calculator Section -->
-            <section class="tab-content" id="calculator-section">
-                <div class="section-header">
-                    <h2>🧮 Trade Calculator</h2>
-                    <p>Calculate and compare trade values in real-time</p>
-                </div>
-                
-                <div class="trade-calculator">
-                    <div class="trade-column your-side">
-                        <div class="column-header">
-                            <h3>👤 Your Side</h3>
-                            <span class="total-value" id="your-total">0</span>
+            <!-- Views -->
+            <div class="views">
+                <!-- Item Lookup -->
+                <section class="view active" id="lookup-view">
+                    <div class="view-header">
+                        <h1>Item Lookup</h1>
+                        <p>Search for any tradable item in Jailbreak</p>
+                    </div>
+                    <div class="search-bar">
+                        <input type="text" id="item-search" placeholder="Enter item name (e.g., Phantom, Carbonara, Veneno)...">
+                        <button id="search-btn">Search</button>
+                    </div>
+                    <div class="results" id="item-results">
+                        <div class="empty-state">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                            <p>Search for items to see results</p>
                         </div>
-                        <div class="trade-items" id="your-items">
-                            <div class="empty-state">
-                                <span>Add items from lookup or search</span>
+                    </div>
+                </section>
+
+                <!-- Trade Calculator -->
+                <section class="view" id="calculator-view">
+                    <div class="view-header">
+                        <h1>Trade Calculator</h1>
+                        <p>Compare trade values between two sides</p>
+                    </div>
+                    <div class="calc-grid">
+                        <div class="calc-panel">
+                            <div class="panel-header">
+                                <h3>Your Items</h3>
+                                <span class="panel-total" id="your-total">0</span>
+                            </div>
+                            <div class="panel-items" id="your-items"></div>
+                            <div class="panel-add">
+                                <input type="text" id="your-search" placeholder="Add item...">
+                                <button class="add-btn">+</button>
+                            </div>
+                        </div>
+                        <div class="calc-divider">
+                            <span>vs</span>
+                        </div>
+                        <div class="calc-panel">
+                            <div class="panel-header">
+                                <h3>Their Items</h3>
+                                <span class="panel-total" id="their-total">0</span>
+                            </div>
+                            <div class="panel-items" id="their-items"></div>
+                            <div class="panel-add">
+                                <input type="text" id="their-search" placeholder="Add item...">
+                                <button class="add-btn">+</button>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="trade-vs">
-                        <div class="vs-badge">VS</div>
-                        <div class="trade-balance" id="trade-balance">
-                            <span class="balance-indicator">⇌ Equal</span>
+                    <div class="calc-summary">
+                        <div class="summary-fairness">
+                            <span class="label">Trade Fairness</span>
+                            <div class="fairness-bar"><div class="fairness-fill" id="fairness-fill"></div></div>
+                            <span id="fairness-text">—</span>
                         </div>
+                        <button class="clear-btn" id="clear-trade">Clear All</button>
                     </div>
-                    
-                    <div class="trade-column their-side">
-                        <div class="column-header">
-                            <h3>👥 Their Side</h3>
-                            <span class="total-value" id="their-total">0</span>
-                        </div>
-                        <div class="trade-items" id="their-items">
-                            <div class="empty-state">
-                                <span>Add items from lookup or search</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                </section>
 
-                <div class="trade-summary" id="trade-summary">
-                    <div class="summary-stats">
-                        <div class="stat">
-                            <span class="stat-label">Your Value</span>
-                            <span class="stat-value" id="summary-your-value">0</span>
-                        </div>
-                        <div class="stat">
-                            <span class="stat-label">Their Value</span>
-                            <span class="stat-value" id="summary-their-value">0</span>
-                        </div>
-                        <div class="stat highlight" id="summary-net">
-                            <span class="stat-label">Net Difference</span>
-                            <span class="stat-value">0</span>
+                <!-- Dupe Check -->
+                <section class="view" id="dupe-view">
+                    <div class="view-header">
+                        <h1>Dupe Check</h1>
+                        <p>Check if a player has duplicate items</p>
+                    </div>
+                    <div class="search-bar compact">
+                        <input type="text" id="dupe-search" placeholder="Enter username or user ID...">
+                        <button id="dupe-btn">Check</button>
+                    </div>
+                    <div class="dupe-results" id="dupe-results">
+                        <div class="empty-state">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                            <p>Enter a username to check for duplicate items</p>
                         </div>
                     </div>
-                    <div class="trade-rating" id="trade-rating">
-                        <span class="rating-badge neutral">Evaluating...</span>
-                    </div>
-                </div>
+                </section>
 
-                <div class="calculator-controls">
-                    <button class="btn-secondary" id="clear-trade">Clear All</button>
-                    <button class="btn-primary" id="export-trade">Export Trade</button>
-                </div>
-            </section>
+                <!-- Inventory -->
+                <section class="view" id="inventory-view">
+                    <div class="view-header">
+                        <h1>Inventory</h1>
+                        <p>View a player's inventory</p>
+                    </div>
+                    <div class="search-bar compact">
+                        <input type="text" id="inv-search" placeholder="Enter username or user ID...">
+                        <button id="inv-btn">Lookup</button>
+                    </div>
+                    <div class="inv-results" id="inv-results">
+                        <div class="empty-state">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            <p>Enter a username to view their inventory</p>
+                        </div>
+                    </div>
+                </section>
 
-            <!-- Dupe Check Section -->
-            <section class="tab-content" id="dupe-section">
-                <div class="section-header">
-                    <h2>⚠️ Dupe Detection</h2>
-                    <p>Check if a player's items are duplicated</p>
-                </div>
-                <div class="search-box compact">
-                    <div class="search-input-wrapper">
-                        <input type="text" id="dupe-user" placeholder="Enter username or user ID...">
-                        <button class="btn-search" id="check-dupe-btn">
-                            <span>Check</span>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                            </svg>
-                        </button>
+                <!-- Favorites -->
+                <section class="view" id="favorites-view">
+                    <div class="view-header">
+                        <h1>Favorites</h1>
+                        <p>Your saved items for quick access</p>
                     </div>
-                </div>
-                <div class="dupe-results" id="dupe-results">
-                    <div class="waiting-state">
-                        <span class="icon">🔍</span>
-                        <p>Enter a username to check for duplicate items</p>
-                    </div>
-                </div>
-                <div class="loading-indicator" id="dupe-loading">
-                    <div class="spinner"></div>
-                    <span>Checking dupe database...</span>
-                </div>
-            </section>
-
-            <!-- Inventory Section -->
-            <section class="tab-content" id="inventory-section">
-                <div class="section-header">
-                    <h2>📦 Player Inventory</h2>
-                    <p>View a player's complete inventory and networth</p>
-                </div>
-                <div class="search-box compact">
-                    <div class="search-input-wrapper">
-                        <input type="text" id="inv-user" placeholder="Enter username or user ID...">
-                        <button class="btn-search" id="check-inv-btn">
-                            <span>Lookup</span>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-                <div class="inventory-display" id="inv-results">
-                    <div class="waiting-state">
-                        <span class="icon">👤</span>
-                        <p>Enter a username to view their inventory</p>
-                    </div>
-                </div>
-                <div class="loading-indicator" id="inv-loading">
-                    <div class="spinner"></div>
-                    <span>Fetching inventory...</span>
-                </div>
-            </section>
-
-            <!-- Trends Section -->
-            <section class="tab-content" id="trends-section">
-                <div class="section-header">
-                    <h2>📈 Market Trends</h2>
-                    <p>Live trending items and market analytics</p>
-                </div>
-                <div class="trends-grid">
-                    <div class="trend-card hot">
-                        <div class="card-badge fire">🔥 Hot</div>
-                        <h4>Highest Demand</h4>
-                        <div class="trend-list" id="high-demand-list">
-                            <!-- Populated via JS -->
+                    <div class="favorites-list" id="favorites-list">
+                        <div class="empty-state">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                            <p>No favorites yet. Click the star on any item to save it.</p>
                         </div>
                     </div>
-                    <div class="trend-card rising">
-                        <div class="card-badge rocket">🚀 Rising</div>
-                        <h4>Trending Up</h4>
-                        <div class="trend-list" id="rising-trend-list">
-                            <!-- Populated via JS -->
-                        </div>
-                    </div>
-                    <div class="trend-card dropping">
-                        <div class="card-badge down">📉 Dropping</div>
-                        <h4>Trending Down</h4>
-                        <div class="trend-list" id="dropping-trend-list">
-                            <!-- Populated via JS -->
-                        </div>
-                    </div>
-                    <div class="trend-card stable">
-                        <div class="card-badge neutral">⚖️ Stable</div>
-                        <h4>Stable Value</h4>
-                        <div class="trend-list" id="stable-trend-list">
-                            <!-- Populated via JS -->
-                        </div>
-                    </div>
-                </div>
-                <div class="market-stats" id="market-stats">
-                    <div class="market-stat">
-                        <span class="stat-number">32K+</span>
-                        <span class="stat-desc">Items Tracked</span>
-                    </div>
-                    <div class="market-stat">
-                        <span class="stat-number">Real-time</span>
-                        <span class="stat-desc">Price Updates</span>
-                    </div>
-                    <div class="market-stat">
-                        <span class="stat-number">Official</span>
-                        <span class="stat-desc">Badimo Data</span>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Compare Section -->
-            <section class="tab-content" id="compare-section">
-                <div class="section-header">
-                    <h2>⚖️ Item Comparison</h2>
-                    <p>Compare multiple items side by side</p>
-                </div>
-                <div class="compare-tool">
-                    <div class="compare-selectors">
-                        <div class="selector-group">
-                            <label>Item 1</label>
-                            <input type="text" id="compare-item1" placeholder="Search first item...">
-                            <div class="compare-dropdown" id="compare-dropdown1"></div>
-                        </div>
-                        <div class="vs-indicator">VS</div>
-                        <div class="selector-group">
-                            <label>Item 2</label>
-                            <input type="text" id="compare-item2" placeholder="Search second item...">
-                            <div class="compare-dropdown" id="compare-dropdown2"></div>
-                        </div>
-                    </div>
-                    <button class="btn-primary" id="load-comparison">Compare</button>
-                </div>
-                <div class="comparison-result" id="comparison-result">
-                    <div class="waiting-state">
-                        <span class="icon">⚖️</span>
-                        <p>Select two items to compare</p>
-                    </div>
-                </div>
-            </section>
+                </section>
+            </div>
         </main>
-
-        <!-- Toast Notifications -->
-        <div class="toast-container" id="toast-container"></div>
-
-        <!-- Footer -->
-        <footer class="footer">
-            <div class="footer-content">
-                <span>JB-X Web Interface | Powered by <a href="https://api.jailbreakchangelogs.xyz" target="_blank">JailbreakChangelogs API</a></span>
-                <span class="separator">•</span>
-                <a href="https://github.com/cheslin23t/JBCL-Commandline-CLI" target="_blank">CLI Download</a>
-                <span class="separator">•</span>
-                <span>Not affiliated with Roblox or Badimo</span>
-            </div>
-        </footer>
     </div>
 
-    <!-- Item Modal -->
-    <div class="modal-overlay" id="item-modal">
-        <div class="modal">
-            <button class="modal-close" id="modal-close">&times;</button>
-            <div class="modal-content" id="modal-content">
-                <!-- Dynamic content -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Trade Export Modal -->
-    <div class="modal-overlay" id="export-modal">
-        <div class="modal export-modal">
-            <button class="modal-close" id="export-modal-close">&times;</button>
-            <div class="modal-header">
-                <h3>📋 Export Trade</h3>
-            </div>
-            <div class="modal-content">
-                <div class="export-preview" id="export-preview"></div>
-                <div class="export-actions">
-                    <button class="btn-secondary" id="copy-trade">Copy to Clipboard</button>
-                    <button class="btn-primary" id="share-discord">Share Config</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- Toast Container -->
+    <div class="toasts" id="toasts"></div>
 
     <script src="js/app.js"></script>
-    <script src="js/enhanced.js"></script>
 </body>
 </html>
