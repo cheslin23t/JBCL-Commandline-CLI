@@ -1,195 +1,73 @@
-# JB-X: Jailbreak Changelogs CLI & API Interface
+# JB-X
 
-[![Python Version](https://img.shields.io/badge/python-3.13.3%2B-blue.svg)](https://www.python.org/downloads/)
-[![License](https://img.shields.io/github/license/cheslin23t/JBCL-Commandline-CLI)](LICENSE)
-[![Stars](https://img.shields.io/github/stars/cheslin23t/JBCL-Commandline-CLI?style=social)](https://github.com/cheslin23t/JBCL-Commandline-CLI/stargazers)
-[![Forks](https://img.shields.io/github/forks/cheslin23t/JBCL-Commandline-CLI?style=social)](https://github.com/cheslin23t/JBCL-Commandline-CLI/network/members)
+JB-X is a Python command-line tool for looking up Roblox Jailbreak item data. I built it to make repeated API queries quicker to run and easier to extend than a collection of one-off scripts.
 
-A Python-based CLI and API interface for querying **Roblox Jailbreak item data**, values, trends, and changelog information. Designed to be **modular**, **extensible**, and **developer-friendly**.
+The CLI uses data from the third-party Jailbreak Changelogs APIs. It is not affiliated with Roblox or the Jailbreak Changelogs project.
 
-[Latest Stable Release](https://github.com/cheslin23t/JBCL-Commandline-CLI/releases/latest/)
+## What it does
 
----
+- Looks up item values, demand, trends, notes, and related fields
+- Prompts for a selection when an item search returns more than one match
+- Registers commands and aliases through a small decorator-based registry
+- Generates global and command-specific help from the registry metadata
+- Loads command modules at startup
+- Keeps interactive command history with `prompt_toolkit`
+- Checks GitHub releases for newer builds
 
-## ✨ Features
+The repository also contains experiments for trade comparison and duplicate-item queries. Some commands are still works in progress; the item lookup and command system are the clearest parts of the tool.
 
-- 🔍 Query Jailbreak items by name  
-- 📊 Display curated value data: cash value, duped value, demand, trend, notes  
-- 🧩 Modular command system with decorators  
-- 🏷️ Alias support for commands  
-- 🆘 Built-in `--help` support for every command  
-- 🚩 Flag parsing (flags must appear after arguments)  
-- 🎛️ Interactive selection when multiple items match  
+## How the command system works
 
----
-
-## 📁 Project Structure
-
-```
-JBCL-Commandline-CLI/
-│
-├── main.py                 # CLI entry point
-├── util/
-│   └── registry.py         # Command registry & decorator
-├── commands/
-│   ├── values.py           # Item value lookup
-│   └── ...                 # Additional commands
-└── README.md
-```
-
----
-
-## 🚀 Getting Started
-
-### Requirements
-
-- Python 3.13.3+ (Earlier versions untested)
-- Virtual environment recommended
-
-### Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### Run the CLI
-
-```bash
-python main.py
-```
-
----
-
-## 🧠 Command System Overview
-
-Commands are registered using a decorator in `util/registry.py`:
+Commands register themselves with the decorator in `util/registry.py`:
 
 ```python
-from util.registry import command
-
 @command(
     name="value",
-    description="Get Jailbreak item value information",
-    usage="value <item name>",
-    aliases=["val"]
+    description="Shows the value of item(s)",
+    usage="value <name...>",
+    aliases=["v", "val", "item"],
 )
-def values(name):
+def values(*names):
     ...
 ```
 
-Each command automatically registers:
+The registry stores the callable and its help metadata under both the canonical name and each alias. `main.py` discovers modules, parses commands, separates trailing flags, and asks for missing required arguments when it can.
 
-- Function reference  
-- Description  
-- Usage string  
-- Canonical name  
-- Aliases  
+## Running it
 
----
+JB-X was developed with Python 3.13. Earlier Python versions have not been tested.
 
-## 🆘 Help System
+```bash
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python main.py
+```
 
-### Global Help
+On Windows, activate the environment with `.venv\Scripts\activate`.
+
+Once the prompt opens, try:
 
 ```text
-Type 'help' for a list of commands.
-Type '<command> --help' for usage.
+help
+help value
+value carbonara
 ```
 
-### Command-Specific Help
+## Repository layout
 
-```bash
-value --help
+```text
+main.py          Interactive prompt and command dispatch
+modules/         Commands loaded at startup
+util/registry.py Command decorator and registry
+util/updater.py  GitHub release check
+util/version.py  Build version and release channel
 ```
 
-Output:
+## API use
 
-```
-value: Get Jailbreak item value information
-Usage: value <item name>
-```
+Please keep requests reasonable and follow the terms of the APIs the tool calls. API availability and response fields are outside this repository's control, so commands that depend on those services may stop working if the upstream API changes.
 
----
+## License
 
-## 🚩 Flags
-
-Flags must appear **after positional arguments**:
-
-✅ Valid:
-
-```bash
-value carbonara --help
-```
-
-❌ Invalid:
-
-```bash
-value --help carbonara
-```
-
----
-
-## 📊 Item Selection Logic
-
-When a query returns multiple items (e.g., same name, different types), the CLI prompts the user to select one:
-
-```
-Multiple items found:
-1. Subcarbon (Rim)
-2. Carbonara (Vehicle)
-3. Carbon Fire (Texture)
-
-Select an item by number:
-```
-
-After selection, the CLI displays:
-
-- Name  
-- Type  
-- Cash Value  
-- Duped Value (if applicable)  
-- Demand  
-- Trend  
-- Notes (if applicable)  
-- Metadata (detailed, optional)
-
----
-
-## 🛠️ Contributing
-
-Contributions, issues, and feature requests are welcome!  
-Feel free to **fork** the project and submit a pull request.
-
----
-
-## 📜 License
-
-This project is licensed under the [AGPL-3.0 License](LICENSE).
-
----
-
-## 🚨 Notice
-
-PLEASE don't ruin it for all of us. Be respectful to the JBCL API and follow all of it's terms. They can be found in one of the links below. The goal of this interface is to minimize the requests being made to JBCL that would otherwise cost them bandwidth and resources. Additionally, this is meant to be an advanced and quick set of tools for Jailbreak Traders.
-
----
-
-## 💡 Useful Links
-
-- [Roblox Jailbreak](https://www.roblox.com/games/606849621/Jailbreak)  
-- [GitHub Issues](https://github.com/cheslin23t/JBCL-Commandline-CLI/issues)  
-- [GitHub Discussions](https://github.com/cheslin23t/JBCL-Commandline-CLI/discussions)  
-- [JBCL API (Undocumented)](https://api.jailbreakchangelogs.xyz)
-
----
-
-## 📇 Contact
-
-- Discord: cologneishim (Or paste discord://-/users/1334576002520846376 into your browser)
-
----
-
-## 🙌 Thanks
-(Readme refined with AI to make it more visually pleasing)
-
-Thanks for using JBCL-Commandline-CLI! 🎉 
+JB-X is available under the AGPL-3.0 license. See `LICENSE` for the full text.
